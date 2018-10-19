@@ -1,0 +1,83 @@
+#cloud-config
+
+hostname: k2
+
+coreos:
+    update:
+        reboot-strategy: off
+    units:
+        - name: 00-static.network
+          content: |
+            [Match]
+            Name=eth0
+            [Network]
+            Address=133.18.202.146/23
+            Gateway=133.18.202.1
+            DNS=210.134.55.219
+            DNS=210.134.48.31
+        - name: etcd.service
+          command: start
+        - name: fleet.service
+          command: start
+        - name: settimezone.service
+          command: start
+          content: |
+              [Unit]
+              Description=timezone
+              [Service]
+              Type=oneshot
+              RemainAfterExit=yes
+              ExecStart=/usr/bin/timedatectl set-timezone Asia/Tokyo
+        - name: sshd.service
+          enable: true
+        - name: sshd.socket
+          mask: true
+        - name: iptables-restore.service
+          enable: true
+write_files:
+  - path: /etc/ssh/sshd_config
+    permissions: 0600
+    owner: root:root
+    content: |
+      Port 4022
+      UsePrivilegeSeparation sandbox
+      PermitRootLogin no
+      AllowUsers noyuno
+      MaxAuthTries 2
+      PubkeyAuthentication yes
+      PasswordAuthentication no
+      ChallengeResponseAuthentication no
+write_files:
+  - path: /var/lib/iptables/rules-save
+    permissions: 0644
+    owner: root:root
+    content: |
+      *filter
+      :INPUT DROP [0:0]
+      :FORWARD DROP [0:0]
+      :OUTPUT ACCEPT [0:0]
+      -A INPUT -i lo -j ACCEPT
+      -A INPUT -i eth1 -j ACCEPT
+      -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+      -A INPUT -p tcp -m tcp --dport 4022 -j ACCEPT
+      -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+      -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+      -A INPUT -p icmp -m icmp --icmp-type 0 -j ACCEPT
+      -A INPUT -p icmp -m icmp --icmp-type 3 -j ACCEPT
+      -A INPUT -p icmp -m icmp --icmp-type 11 -j ACCEPT
+      COMMIT
+
+users:
+    - name: noyuno
+      passwd: "$1$l9A5cLrg$AePMoJq2jthLtlwJMMYjg0"
+      groups:
+          - sudo
+          - wheel
+          - docker
+          - systemd-journal
+          - portage
+          - rkt
+      ssh_authorized_keys:
+          - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDvdP3b+COQqOevcnTpb8S/LbEygh8yVC82lO2pMpHqtwRwSean1DnYbP0sgsF3Tkz3c+z+p52c8SJtPCIswLoxdOHqsl8Ylpv4AvdggbJbItN05CyfHEoHvybcgYvMGUl6kWq6N08o8HChMv3mIl0iUNopuExolMVLXlte7Dtm1p7QaWaQGN3TC54GaQlzVjee9K8N7FJ0w85huPKCETwDiqWBSoQbjlR1VbWLGbxvB51ZR6fOzsXHLHKhZY3zt3d2b/D7z34DP19z5kU8ifYKG74zBK8sFwyTp7aPPl+hY7U2fvYbRyF4qicbgsw6VuKCV2MiYPcOcq/qUDaEjJ99 noyuno@arch
+
+
