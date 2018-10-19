@@ -1,7 +1,5 @@
 FROM postgres:11-alpine
-ARG POSTGRES_GITBUCKET_PASSWORD
-ENV POSTGRES_GITBUCKET_PASSWORD "$POSTGRES_GITBUCKET_PASSWORD"
 
-COPY conf/init.sh /
-RUN chmod +x /init.sh && /init.sh ${POSTGRES_GITBUCKET_PASSWORD}
+COPY conf/init.sh /docker-entrypoint-initdb.d
+RUN chmod +x /docker-entrypoint-initdb.d/init.sh
 
