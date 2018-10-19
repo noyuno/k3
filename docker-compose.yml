@@ -3,16 +3,17 @@ services:
     https-portal:
         image: steveltn/https-portal:1
         restart: always
+        links:
+            - nginx
         ports:
             - '80:80'
             - '443:443'
         environment:
             STAGE: staging
-            DOMAINS: >-
-                k2.noyuno.space
+            DOMAINS: 'k2.noyuno.space -> http://nginx:80'
         volumes:
-            - ./data/cert: /var/lib/https-portal
-            - vhosts: /var/www/vhosts
+            - ./data/cert:/var/lib/https-portal
+            - vhosts:/var/www/cert
     gitbucket:
         image: gitbucket/gitbucket
         restart: always
@@ -21,9 +22,9 @@ services:
         depends_on:
             - postgres
         environment:
-            - GITBUCKET_DB_URL=jdbc:postgresql://postgres/gitbucket
-            - GITBUCKET_DB_USER=gitbucket
-            - GITBUCKET_DB_PASSWORD=${POSTGRES_GITBUCKET_PASSWORD}
+            GITBUCKET_DB_URL: 'jdbc:postgresql://postgres/gitbucket'
+            GITBUCKET_DB_USER: gitbucket
+            GITBUCKET_DB_PASSWORD: ${POSTGRES_GITBUCKET_PASSWORD}
         
     postgres:
         build:
