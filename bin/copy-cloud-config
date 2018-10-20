@@ -1,0 +1,4 @@
+#!/bin/bash -e
+
+sudo cp cloud-config.yml /var/lib/coreos-install/user_data
+
