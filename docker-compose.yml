@@ -51,6 +51,13 @@ services:
         image: owncloud/server:10.0
         links:
             - postgres
+        environment:
+            OWNCLOUD_DOMAIN: dir.noyu.cf
+            OWNCLOUD_DB_TYPE: pgsql
+            OWNCLOUD_DB_NAME: owncloud
+            OWNCLOUD_DB_USERNAME: owncloud
+            OWNCLOUD_DB_PASSWORD: ${POSTGRES_OWNCLOUD_PASSWORD}
+            OWNCLOUD_DB_HOST: db
         volumes:
             - "./data/owncloud/apps:/var/www/owncloud/apps"
             - "./data/owncloud/config:/var/www/owncloud/config"
