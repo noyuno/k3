@@ -13,7 +13,7 @@ services:
             DOMAINS: 'noyu.cf, k2.noyu.cf, git.noyu.cf, dir.noyu.cf'
         volumes:
             - ./data/cert:/var/lib/https-portal
-            - ./nginx/conf:/var/lib/nginx-conf:ro
+            - ./nginx/conf:/var/lib/nginx-conf
             - ./nginx/html:/var/www/html
     php7:
         image: php:7-fpm-alpine
