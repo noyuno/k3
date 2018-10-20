@@ -10,7 +10,7 @@ services:
 #        restart: always
         environment:
             STAGE: staging
-            DOMAINS: 'noyu.cf, k2.noyu.cf, git.noyu.cf, dir.noyu.cf'
+            DOMAINS: 'noyu.cf, k2.noyu.cf, git.noyu.cf -> http://gitbucket:8080'
         volumes:
             - ./data/cert:/var/lib/https-portal
             - ./nginx/conf:/var/lib/nginx-conf

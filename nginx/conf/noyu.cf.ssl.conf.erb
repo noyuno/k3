@@ -33,19 +33,12 @@ server {
 
     ssl_dhparam <%= dhparam_path %>;
 
-    location / {
+    #location / {
        #return    301 <%= domain.upstream %>;
 
        # Or if you want to hard-code it
        # return    301 https://letsencrypt.org;
-        proxy_pass http://;
-        proxy_connect_timeout   150;
-        proxy_send_timeout      100;
-        proxy_read_timeout      100;
-        proxy_buffers           4 32k;
-        client_max_body_size    500m; # Big number is we can post big commits.
-        client_body_buffer_size 128k;
-    }
+    #}
 
     location ~ \.php$ {
         root /var/www/html;
