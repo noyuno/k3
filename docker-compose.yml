@@ -12,13 +12,13 @@ services:
             STAGE: staging
             DOMAINS: 'k2.noyu.cf -> http://nginx:80'
         volumes:
-            - cert:/var/lib/https-portal
+            - ./data/cert:/var/lib/https-portal
             - vhosts:/var/www/cert
     gitbucket:
         image: gitbucket/gitbucket
         restart: always
         volumes:
-            - gitbucket:/gitbucket
+            - ./data/gitbucket:/gitbucket
         depends_on:
             - postgres
         environment:
@@ -30,7 +30,7 @@ services:
         image: postgres:11-alpine
         restart: always
         volumes:
-            - /var/data/postgres:/var/lib/postgresql/data
+            - ./data/postgres:/var/lib/postgresql/data
             - ./postgres/init:/docker-entrypoint-initdb.d
         environment:
             POSTGRES_USER: postgres
@@ -51,7 +51,8 @@ services:
         ports:
             - 80:80
         volumes:
-            - cert:/var/lib/cert
+            - ./data/cert:/var/lib/cert
+            - ./nginx/www:/var/www/html
 
     unbound:
         build: unbound
@@ -59,18 +60,12 @@ services:
             - 53:53
 
 volumes:
-    cert:
-        driver: local
-        driver_opts:
-            type: none
-            o: bind
-            device: /var/data/cert
+#    cert:
+#        driver: local
+#        driver_opts:
+#            type: none
+#            o: bind
+#            device: /home/noyuno/k2/data/cert
     vhosts:
-    gitbucket:
-        driver: local
-        driver_opts:
-            type: none
-            o: bind
-            device: /var/data/gitbucket
 
 
