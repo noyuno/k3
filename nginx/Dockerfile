@@ -1,4 +1,4 @@
-FROM nginx:stable-alpine
+FROM steveltn/https-portal:1
 
-COPY conf /etc/nginx
+
 
