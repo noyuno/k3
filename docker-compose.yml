@@ -55,10 +55,10 @@ services:
             - ./data/cert:/var/lib/cert
             - ./nginx/www:/var/www/html
 
-    unbound:
-        build: unbound
-        ports:
-            - 53:53
+#    unbound:
+#        build: unbound
+#        ports:
+#            - 53:53
 
 volumes:
 #    cert:
