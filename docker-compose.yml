@@ -55,7 +55,7 @@ services:
             - ./data/cert:/var/lib/cert
             - ./nginx/www:/var/www/html
 
-    unbound2:
+    unbound:
         build: unbound
         ports:
             - 53:53
