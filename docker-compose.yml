@@ -59,9 +59,7 @@ services:
             OWNCLOUD_DB_PASSWORD: ${POSTGRES_OWNCLOUD_PASSWORD}
             OWNCLOUD_DB_HOST: postgres
         volumes:
-            - "./data/owncloud/apps:/var/www/owncloud/apps"
-            - "./data/owncloud/config:/var/www/owncloud/config"
-            - "./data/owncloud/data:/var/www/owncloud/data"
+            - "./data/owncloud/data:/mnt/data"
             - owncloud:/var/www/owncloud
 
 volumes:
