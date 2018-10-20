@@ -60,8 +60,9 @@ write_files:
       -A INPUT -i eth1 -j ACCEPT
       -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
       -A INPUT -p tcp -m tcp --dport 4022 -j ACCEPT
-      -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
-      -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
+      -A INPUT --dport 80 -j ACCEPT
+      -A INPUT --dport 443 -j ACCEPT
+      -A INPUT --dport 53 -j ACCEPT
       -A INPUT -p icmp -m icmp --icmp-type 0 -j ACCEPT
       -A INPUT -p icmp -m icmp --icmp-type 3 -j ACCEPT
       -A INPUT -p icmp -m icmp --icmp-type 11 -j ACCEPT

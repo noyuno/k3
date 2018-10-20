@@ -27,10 +27,11 @@ services:
             GITBUCKET_DB_PASSWORD: ${POSTGRES_GITBUCKET_PASSWORD}
         
     postgres:
-        build: postgres
+        image: postgres:11-alpine
         restart: always
         volumes:
             - /var/data/postgres:/var/lib/postgresql/data
+            - ./postgres/init:/docker-entrypoint-initdb.d
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -39,7 +40,11 @@ services:
     nginx:
         build: nginx
         restart: always
-        image: tiredofit/unbound
+        ports:
+            - 80:80
+
+    unbound:
+        build: unbound
         ports:
             - 53:53
 
