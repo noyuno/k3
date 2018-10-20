@@ -4,7 +4,7 @@ services:
         image: steveltn/https-portal:1
         restart: always
         links:
-            - nginx.notls
+            - nginx-notls
         ports:
             - '80:80'
             - '443:443'
@@ -45,7 +45,7 @@ services:
 #        volumes:
 #            - cert:/var/lib/cert
 
-    nginx.notls:
+    nginx-notls:
         build: nginx.notls
         restart: always
         ports:
