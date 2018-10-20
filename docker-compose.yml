@@ -10,7 +10,7 @@ services:
             DOMAINS: 'noyu.cf, k2.noyu.cf, git.noyu.cf, dir.noyu.cf'
         volumes:
             - ./data/cert:/var/lib/https-portal
-            - vhosts:/var/www/vhosts
+            - certchallenges:/var/www/default/challenges
     gitbucket:
         image: gitbucket/gitbucket
         restart: always
@@ -42,7 +42,7 @@ services:
         volumes:
             - ./data/cert:/var/lib/cert
             - ./nginx/www:/var/www/html
-            - vhosts:/var/www/default/challenges
+            - certchallenges:/var/www/cert
 
     nginx-notls:
         build: nginx.notls
@@ -52,7 +52,7 @@ services:
         volumes:
             - ./data/cert:/var/lib/cert
             - ./nginx/www:/var/www/html
-            - vhosts:/var/www/cert
+            - certchallenges:/var/www/cert
 
 #    unbound:
 #        build: unbound
