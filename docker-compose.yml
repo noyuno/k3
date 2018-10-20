@@ -67,7 +67,7 @@ services:
 #        ports:
 #            - 53:53
 
-volumes:
+#volumes:
 #    cert:
 #        driver: local
 #        driver_opts:
