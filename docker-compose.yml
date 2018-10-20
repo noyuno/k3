@@ -8,17 +8,19 @@ services:
         ports:
             - 80:80
             - 443:443
-#        restart: always
+        restart: always
         environment:
             STAGE: staging
             DOMAINS: 'noyu.cf, k2.noyu.cf, git.noyu.cf -> http://gitbucket:8080'
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
             - ./data/cert:/var/lib/https-portal
-            - ./nginx/conf:/var/lib/nginx-conf
+            - ./nginx/conf:/var/lib/nginx-conf:ro
             - ./nginx/html:/var/www/html
+            - owncloud:/var/www/owncloud
     php7:
         image: php:7-fpm-alpine
+        restart: always
         volumes:
             - ./nginx/html:/var/www/html
     gitbucket:
@@ -43,39 +45,19 @@ services:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             POSTGRES_GITBUCKET_PASSWORD: ${POSTGRES_GITBUCKET_PASSWORD}
+            POSTGRES_OWNCLOUD_PASSWORD: ${POSTGRES_OWNCLOUD_PASSWORD}
 
-#    nginx:
-#        build: nginx
-#        restart: always
-#        ports:
-#            - 80:80
-#        volumes:
-#            - ./data/cert:/var/lib/cert
-#            - ./nginx/www:/var/www/html
-#            - certchallenges:/var/www/cert
-#
-#    nginx-notls:
-#        build: nginx-notls
-#        restart: always
-#        ports:
-#            - 80:80
-#        volumes:
-#            - ./data/cert:/var/lib/cert
-#            - ./nginx-notls/www:/var/www/html
-#            - certchallenges:/var/www/cert
+    owncloud:
+        image: owncloud/server:10.0
+        links:
+            - postgres
+        volumes:
+            - "./data/owncloud/apps:/var/www/owncloud/apps"
+            - "./data/owncloud/config:/var/www/owncloud/config"
+            - "./data/owncloud/data:/var/www/owncloud/data"
+            - owncloud:/var/www/owncloud
 
-#    unbound:
-#        build: unbound
-#        ports:
-#            - 53:53
-
-#volumes:
-#    cert:
-#        driver: local
-#        driver_opts:
-#            type: none
-#            o: bind
-#            device: /home/noyuno/k2/data/cert
-#    certchallenges:
+volumes:
+    owncloud:
 
 
