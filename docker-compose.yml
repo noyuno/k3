@@ -4,6 +4,7 @@ services:
         image: steveltn/https-portal:1
         links:
             - php7
+            - gitbucket
         ports:
             - 80:80
             - 443:443
