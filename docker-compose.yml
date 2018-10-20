@@ -12,7 +12,7 @@ services:
             STAGE: staging
             DOMAINS: 'k2.noyu.cf -> http://nginx:80'
         volumes:
-            - ./data/cert:/var/lib/https-portal
+            - cert:/var/lib/https-portal
             - vhosts:/var/www/cert
     gitbucket:
         image: gitbucket/gitbucket
@@ -42,6 +42,8 @@ services:
         restart: always
         ports:
             - 80:80
+        volumes:
+            - cert:/var/lib/cert
 
     unbound:
         build: unbound
@@ -49,6 +51,12 @@ services:
             - 53:53
 
 volumes:
+    cert:
+        driver: local
+        driver_opts:
+            type: none
+            o: bind
+            device: ./data/cert
     vhosts:
 
 
