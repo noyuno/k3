@@ -4,7 +4,7 @@ services:
         image: steveltn/https-portal:1
         restart: always
         links:
-            - nginx
+            - nginx.notls
         ports:
             - '80:80'
             - '443:443'
