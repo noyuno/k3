@@ -66,6 +66,6 @@ volumes:
 #            type: none
 #            o: bind
 #            device: /home/noyuno/k2/data/cert
-    vhosts:
+    certchallenges:
 
 
