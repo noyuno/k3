@@ -2,6 +2,10 @@
 # This file overrides default nginx HTTPS settings for my.example.com
 # Mount this file as "/var/lib/nginx-conf/my.example.com.ssl.conf.erb"
 
+upstream gitbucket{
+    server gitbucket:8080;
+}
+
 server {
     listen 443 ssl http2;
     listen  [::]:443 ssl http2;
@@ -20,9 +24,6 @@ server {
     proxy_redirect off;
     proxy_max_temp_file_size 0;
 
-    client_max_body_size 10G;
-    fastcgi_buffers 64 4K;
-
     gzip on;
     gzip_types text/css application/javascript application/json application/font-woff application/font-tff image/gif image/png image/jpeg application/octet-stream;
 
@@ -37,13 +38,12 @@ server {
 
     ssl_dhparam <%= dhparam_path %>;
 
-    # Google Analytics
     location /.well-known {
         alias /var/www/html/.well-known;
     }
 
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://gitbucket;
         proxy_connect_timeout   150;
         proxy_send_timeout      100;
         proxy_read_timeout      100;
@@ -58,7 +58,7 @@ server {
     }
 
     location /assets/ {
-        proxy_pass              http://localhost:8080/assets/;
+        proxy_pass              http://gitbucket/assets/;
         proxy_cache             cache;
         proxy_cache_key         $host$uri$is_args$args;
         proxy_cache_valid       200 301 302 1d;
