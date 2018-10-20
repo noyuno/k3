@@ -21,7 +21,6 @@ services:
         volumes:
             - ./nginx/html:/var/www/html
     gitbucket:
-        container_name: gitbucket
         image: gitbucket/gitbucket
         restart: always
         volumes:
