@@ -45,7 +45,7 @@ services:
             - certchallenges:/var/www/cert
 
     nginx-notls:
-        build: nginx.notls
+        build: nginx-notls
         restart: always
         ports:
             - 80:80
