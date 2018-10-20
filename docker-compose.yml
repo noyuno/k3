@@ -10,7 +10,7 @@ services:
             - '443:443'
         environment:
             STAGE: staging
-            DOMAINS: 'k2.noyu.cf -> http://nginx:80'
+            DOMAINS: 'noyu.cf, k2.noyu.cf'
         volumes:
             - ./data/cert:/var/lib/https-portal
             - vhosts:/var/www/cert
