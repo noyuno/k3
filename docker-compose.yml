@@ -45,7 +45,7 @@ services:
 #        volumes:
 #            - cert:/var/lib/cert
 
-    nginx:
+    nginx.notls:
         build: nginx.notls
         restart: always
         ports:
