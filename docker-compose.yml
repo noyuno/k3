@@ -51,7 +51,7 @@ services:
             - 80:80
         volumes:
             - ./data/cert:/var/lib/cert
-            - ./nginx/www:/var/www/html
+            - ./nginx-notls/www:/var/www/html
             - certchallenges:/var/www/cert
 
 #    unbound:
