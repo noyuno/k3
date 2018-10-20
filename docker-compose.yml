@@ -43,7 +43,8 @@ services:
         ports:
             - 80:80
         volumes:
-            - cert:/var/lib/cert
+            - ./data/cert:/var/lib/cert
+            - ./nginx/www:/var/www/html
 
     nginx-notls:
         build: nginx.notls
