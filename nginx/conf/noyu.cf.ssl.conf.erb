@@ -41,6 +41,8 @@ server {
        # return    301 https://letsencrypt.org;
     #}
 
+    root /var/www/html;
+
     location ~ \.php$ {
         root /var/www/html;
         try_files $uri =404;

@@ -54,10 +54,10 @@ services:
         environment:
             OWNCLOUD_DOMAIN: dir.noyu.cf
             OWNCLOUD_DB_TYPE: pgsql
+            OWNCLOUD_DB_HOST: postgres
             OWNCLOUD_DB_NAME: owncloud
             OWNCLOUD_DB_USERNAME: owncloud
             OWNCLOUD_DB_PASSWORD: ${POSTGRES_OWNCLOUD_PASSWORD}
-            OWNCLOUD_DB_HOST: postgres
         volumes:
             - "./data/owncloud/data:/mnt/data"
             - owncloud:/var/www/owncloud
