@@ -38,12 +38,13 @@ services:
             GITBUCKET_DB_PASSWORD: ${POSTGRES_GITBUCKET_PASSWORD}
         
     postgres:
-        image: postgres:11-alpine
+        build: postgres
+#        image: postgres:11-alpine
         restart: always
         volumes:
             - ./data/postgres:/var/lib/postgresql/data
             - ./postgres/init:/docker-entrypoint-initdb.d
-            - ./postgres/conf:/etc/postgresql
+#            - ./postgres/conf:/etc/postgresql
         environment:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
