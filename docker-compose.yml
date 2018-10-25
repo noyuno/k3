@@ -57,24 +57,12 @@ services:
             OWNCLOUD_DB_NAME: owncloud
             OWNCLOUD_DB_USERNAME: owncloud
             OWNCLOUD_DB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
-            OWNCLOUD_REDIS_ENABLED: true
+            OWNCLOUD_REDIS_ENABLED: "true"
             OWNCLOUD_REDIS_HOST: redis
         volumes:
             - ./data/owncloud/data:/mnt/data
             # for nginx
             - owncloud:/var/www/owncloud
-
-#    owncloud-postgres:
-#        build: owncloud/postgres
-#        restart: always
-#        volumes:
-#            - ./data/owncloud/postgres:/var/lib/postgresql/data
-#            - ./owncloud/postgres/init:/docker-entrypoint-initdb.d
-#        environment:
-#            POSTGRES_USER: postgres
-#            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-#            POSTGRES_OWNCLOUD_PASSWORD: ${POSTGRES_OWNCLOUD_PASSWORD}
-
 
     owncloud-mariadb:
         image: mariadb:10
