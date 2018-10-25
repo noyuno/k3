@@ -28,8 +28,6 @@ services:
         restart: always
         volumes:
             - ./data/gitbucket/data:/gitbucket
-        ports:
-            - 8080:8080
         links:
             - gitbucket-postgres
         environment:
