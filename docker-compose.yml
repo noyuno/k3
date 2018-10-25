@@ -68,12 +68,10 @@ services:
         image: mariadb:10
         restart: always
         environment:
-            MARIADB_ROOT_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
-            MARIADB_USERNAME: owncloud
-            MARIADB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
-            MARIADB_DATABASE: owncloud
-            MARIADB_MAX_ALLOWED_PACKET: 128M
-            MARIADB_INNODB_LOG_FILE_SIZE: 64M
+            MYSQL_ROOT_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
+            MYSQL_USER: owncloud
+            MYSQL_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
+            MYSQL_DATABASE: owncloud
         volumes:
             - ./data/owncloud/mariadb:/var/lib/mysql
             - ./data/owncloud/mariadb-backup:/var/lib/backup
