@@ -48,14 +48,17 @@ services:
     owncloud:
         image: owncloud/server:10.0
         links:
-            - owncloud-postgres
+            - owncloud-mariadb
+            - redis
         environment:
             OWNCLOUD_DOMAIN: dir.noyu.cf
             OWNCLOUD_DB_TYPE: pgsql
-            OWNCLOUD_DB_HOST: owncloud-postgres
+            OWNCLOUD_DB_HOST: owncloud-mariadb
             OWNCLOUD_DB_NAME: owncloud
             OWNCLOUD_DB_USERNAME: owncloud
             OWNCLOUD_DB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
+            OWNCLOUD_REDIS_ENABLED: true
+            OWNCLOUD_REDIS_HOST: redis
         volumes:
             - ./data/owncloud/data:/mnt/data
             # for nginx
@@ -73,25 +76,24 @@ services:
 #            POSTGRES_OWNCLOUD_PASSWORD: ${POSTGRES_OWNCLOUD_PASSWORD}
 
 
-    db:
-        image: webhippie/mariadb:latest
+    owncloud-mariadb:
+        image: mariadb:10
         restart: always
         environment:
-            - MARIADB_ROOT_PASSWORD=${OWNCLOUD_DB_PASSWORD}
-            - MARIADB_USERNAME=owncloud
-            - MARIADB_PASSWORD=${OWNCLOUD_DB_PASSWORD}
-            - MARIADB_DATABASE=owncloud
-            - MARIADB_MAX_ALLOWED_PACKET=128M
-            - MARIADB_INNODB_LOG_FILE_SIZE=64M
-        healthcheck:
-            test: ["CMD", "/usr/bin/healthcheck"]
-            interval: 30s
-            timeout: 10s
-            retries: 5
+            MARIADB_ROOT_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
+            MARIADB_USERNAME: owncloud
+            MARIADB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
+            MARIADB_DATABASE: owncloud
+            MARIADB_MAX_ALLOWED_PACKET: 128M
+            MARIADB_INNODB_LOG_FILE_SIZE: 64M
         volumes:
             - ./data/owncloud/mariadb:/var/lib/mysql
             - ./data/owncloud/mariadb-backup:/var/lib/backup
-
+    
+    redis:
+        image: redis:5-alpine
+        restart: always
+        
 volumes:
     owncloud:
 
