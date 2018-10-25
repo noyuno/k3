@@ -9,5 +9,4 @@ i() {
 }
 
 i gitbucket "${POSTGRES_GITBUCKET_PASSWORD}"
-i owncloud  "${POSTGRES_OWNCLOUD_PASSWORD}"
 
