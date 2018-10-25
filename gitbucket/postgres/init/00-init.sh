@@ -8,5 +8,5 @@ i() {
     psql -U postgres -c "grant all privileges on database $t to $t;"
 }
 
-i gitbucket "${POSTGRES_GITBUCKET_PASSWORD}"
+i gitbucket "${DB_PASSWORD}"
 
