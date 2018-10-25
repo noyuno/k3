@@ -61,7 +61,8 @@ services:
             OWNCLOUD_DB_PASSWORD: ${POSTGRES_OWNCLOUD_PASSWORD}
         volumes:
             - ./data/owncloud/data:/mnt/data
-#            - owncloud:/var/www/owncloud
+            # for nginx
+            - owncloud:/var/www/owncloud
 
     owncloud-postgres:
         build: owncloud/postgres
@@ -74,7 +75,7 @@ services:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             POSTGRES_OWNCLOUD_PASSWORD: ${POSTGRES_OWNCLOUD_PASSWORD}
 
-#volumes:
-#    owncloud:
+volumes:
+    owncloud:
 
 
