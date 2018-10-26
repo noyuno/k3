@@ -25,6 +25,8 @@ services:
             - ./nginx/html:/var/www/html
             - owncloud:/var/www/owncloud
             - ./data/owncloud/data:/mnt/data
+        
+        command: bash -c 'usermod -aG 1001 www-data'
     gitbucket:
         image: gitbucket/gitbucket
         restart: always

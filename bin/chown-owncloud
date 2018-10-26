@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+sudo groupadd -g 1001 owncloud
+sudo find data/owncloud/data |xargs sudo chown 33.1001
+sudo ls -ld  $(sudo find data/owncloud/data/)
+
