@@ -65,6 +65,8 @@ services:
             OWNCLOUD_DB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
             OWNCLOUD_REDIS_ENABLED: "true"
             OWNCLOUD_REDIS_HOST: redis
+            OWNCLOUD_ADMIN_USERNAME: noyuno
+            OWNCLOUD_ADMIN_PASSWORD: ${OWNCLOUD_PASSWORD}
         volumes:
             - ./data/owncloud/data:/mnt/data
             # for nginx
