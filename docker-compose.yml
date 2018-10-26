@@ -11,7 +11,7 @@ services:
         restart: always
         environment:
             STAGE: staging
-            DOMAINS: 'noyu.cf, k2.noyu.cf, git.noyu.cf -> http://gitbucket:8080'
+            DOMAINS: 'noyu.cf, k2.noyu.cf, git.noyu.cf -> http://gitbucket:8080, dir.noyu.cf'
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
             - ./data/cert:/var/lib/https-portal
