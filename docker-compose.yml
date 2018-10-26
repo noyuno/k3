@@ -108,3 +108,9 @@ services:
             - ./data/wekan/mongodb:/data/db
             - ./data/wekan/mongodb-dump:/dump
 
+    jenkins:
+        image: jenkins/jenkins:alpine
+        restart: always
+        volumes:
+            - ./data/jenkins:/var/jenkins_home
+
