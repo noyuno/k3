@@ -95,7 +95,7 @@ services:
         environment:
             ROOT_URL: https://board.noyu.cf
             MONGO_URL: mongodb://wekan-mongodb:27017/wekan
-            WITH_API: true
+            WITH_API: "true"
     
     wekan-db:
         image: mongo:latest
