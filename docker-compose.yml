@@ -16,7 +16,8 @@ services:
                 noyu.cf,
                 k2.noyu.cf,
                 git.noyu.cf -> http://gitbucket:8080,
-                dir.noyu.cf -> http://owncloud:8080
+                dir.noyu.cf -> http://owncloud:8080, 
+                board.noyu.cf -> http://wekan:8080
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
             - ./data/cert:/var/lib/https-portal
@@ -35,13 +36,13 @@ services:
         volumes:
             - ./data/gitbucket/data:/gitbucket
         links:
-            - gitbucket-postgres
+            - gitbucket-db
         environment:
             GITBUCKET_DB_URL: 'jdbc:postgresql://gitbucket-postgres/gitbucket'
             GITBUCKET_DB_USER: gitbucket
             GITBUCKET_DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
 
-    gitbucket-postgres:
+    gitbucket-db:
         build: gitbucket/postgres
         restart: always
         volumes:
@@ -52,14 +53,14 @@ services:
             DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
 
     owncloud:
-        image: owncloud/server:10.0
+        image: owncloud/server:latest
         links:
             - owncloud-mariadb
             - redis
         environment:
             OWNCLOUD_DOMAIN: dir.noyu.cf
             OWNCLOUD_DB_TYPE: mysql
-            OWNCLOUD_DB_HOST: owncloud-mariadb
+            OWNCLOUD_DB_HOST: owncloud-db
             OWNCLOUD_DB_NAME: owncloud
             OWNCLOUD_DB_USERNAME: owncloud
             OWNCLOUD_DB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
@@ -70,8 +71,8 @@ services:
         volumes:
             - ./data/owncloud/data:/mnt/data
 
-    owncloud-mariadb:
-        image: mariadb:10
+    owncloud-db:
+        image: mariadb:latest
         restart: always
         environment:
             MYSQL_ROOT_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
@@ -83,6 +84,26 @@ services:
             - ./data/owncloud/mariadb-backup:/var/lib/backup
 
     redis:
-        image: redis:5-alpine
+        image: redis:alpine
         restart: always
+
+    wekan:
+        image: quay.io/wekan/wekan:latest
+        restart: always
+        link:
+            wekan-db
+        environment:
+            ROOT_URL: https://board.noyu.cf
+            MONGO_URL: mongodb://wekan-mongodb:27017/wekan
+            WITH_API: true
+    
+    wekan-db:
+        image: mongo:latest
+        restart: always
+        expose:
+            - 27017
+        command: mongod --smallfiles --oplogSize 128
+        volumes:
+            - ./data/wekan/mongodb:/data/db
+            - ./data/wekan/mongodb-dump:/dump
 
