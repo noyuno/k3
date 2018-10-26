@@ -11,22 +11,22 @@ services:
         restart: always
         environment:
             STAGE: staging
-            DOMAINS: 'noyu.cf, k2.noyu.cf, git.noyu.cf -> http://gitbucket:8080, dir.noyu.cf'
+            DOMAINS: 'noyu.cf, k2.noyu.cf, git.noyu.cf -> http://gitbucket:8080, dir.noyu.cf -> http://owncloud:80'
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
             - ./data/cert:/var/lib/https-portal
             - ./nginx/conf:/var/lib/nginx-conf:ro
             - ./nginx/html:/var/www/html
-            - owncloud:/var/www/owncloud
+#            - owncloud:/var/www/owncloud
 
     php7:
         image: php:7-fpm-alpine
         restart: always
         volumes:
             - ./nginx/html:/var/www/html
-            - owncloud:/var/www/owncloud
-            - ./data/owncloud/data:/mnt/data
-        command: sh -c 'apk add shadow ; groupadd -g 2001 owncloud ; usermod -aG owncloud www-data ; php-fpm'
+#            - owncloud:/var/www/owncloud
+#            - ./data/owncloud/data:/mnt/data
+#        command: sh -c 'apk add shadow ; groupadd -g 2001 owncloud ; usermod -aG owncloud www-data ; php-fpm'
 
     gitbucket:
         image: gitbucket/gitbucket
@@ -67,8 +67,8 @@ services:
         volumes:
             - ./data/owncloud/data:/mnt/data
             # for nginx
-            - owncloud:/var/www/owncloud
-        command: sh -c 'groupadd -g 2001 owncloud ; find /mnt/data | xargs chgrp owncloud'
+            #- owncloud:/var/www/owncloud
+        #command: sh -c 'groupadd -g 2001 owncloud ; find /mnt/data | xargs chgrp owncloud'
 
     owncloud-mariadb:
         image: mariadb:10
@@ -86,7 +86,7 @@ services:
         image: redis:5-alpine
         restart: always
  
-volumes:
-    owncloud:
+#volumes:
+#    owncloud:
 
 

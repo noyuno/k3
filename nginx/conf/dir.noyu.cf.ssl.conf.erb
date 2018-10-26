@@ -2,6 +2,10 @@
 # This file overrides default nginx HTTPS settings for my.example.com
 # Mount this file as "/var/lib/nginx-conf/my.example.com.ssl.conf.erb"
 
+upstream gitbucket{
+    server owncloud:80;
+}
+
 server {
     listen 443 ssl http2;
     listen  [::]:443 ssl http2;
@@ -37,60 +41,78 @@ server {
 
     ssl_dhparam <%= dhparam_path %>;
 
-    root /var/www/owncloud;
-    index index.php;
-    error_page 403 /core/templates/403.php;
-    error_page 404 /core/templates/404.php;
-
-    rewrite ^/.well-known/carddav /remote.php/carddav/ permanent;
-    rewrite ^/.well-known/caldav /remote.php/caldav/ permanent;
-
-    location = /robots.txt {
-        allow all;
-        log_not_found off;
-        access_log off;
-    }
-
-    location ~ ^/(build|tests|config|lib|3rdparty|templates|data)/ {
-        deny all;
-    }
-
-    location ~ ^/(?:\.|autotest|occ|issue|indie|db_|console) {
-        deny all;
+    location /.well-known {
+        alias /var/www/html/.well-known;
     }
 
     location / {
-        rewrite ^/remote/(.*) /remote.php last;
-        rewrite ^(/core/doc/[^\/]+/)$ $1/index.html;
-        try_files $uri $uri/ /index.php;
+        proxy_pass http://owncloud;
+        proxy_connect_timeout   150;
+        proxy_send_timeout      100;
+        proxy_read_timeout      100;
+        proxy_buffers           4 32k;
+        client_max_body_size    5G; # Big number is we can post big commits.
+        client_body_buffer_size 128k;
+
     }
 
-    location ~ \.php(?:$|/) {
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param PATH_INFO $fastcgi_path_info;
-        fastcgi_param modHeadersAvailable true; #Avoid sending the security headers twice
-        fastcgi_pass php7:9000;
-        fastcgi_intercept_errors on;
+    location /robots.txt {
+        alias /var/www/html/robots-disallow.txt;
     }
+#    root /var/www/owncloud;
+#    index index.php;
+#    error_page 403 /core/templates/403.php;
+#    error_page 404 /core/templates/404.php;
+#
+#    rewrite ^/.well-known/carddav /remote.php/carddav/ permanent;
+#    rewrite ^/.well-known/caldav /remote.php/caldav/ permanent;
+#
+#    location = /robots.txt {
+#        allow all;
+#        log_not_found off;
+#        access_log off;
+#    }
+#
+#    location ~ ^/(build|tests|config|lib|3rdparty|templates|data)/ {
+#        deny all;
+#    }
+#
+#    location ~ ^/(?:\.|autotest|occ|issue|indie|db_|console) {
+#        deny all;
+#    }
 
-    # Adding the cache control header for js and css files
-    # Make sure it is BELOW the location ~ \.php(?:$|/) { block
-    location ~* \.(?:css|js)$ {
-        add_header Cache-Control "public, max-age=7200";
-        # Add headers to serve security related headers
-        add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
-        add_header X-Content-Type-Options nosniff;
-        add_header X-Frame-Options "SAMEORIGIN";
-        add_header X-XSS-Protection "1; mode=block";
-        add_header X-Robots-Tag none;
-        # Don't log access to assets
-        access_log off;
-    }
-
-    # Don't log access to other assets
-    location ~* \.(?:jpg|jpeg|gif|bmp|ico|png|swf)$ {
-        access_log off;
-    }
+#    location / {
+#        rewrite ^/remote/(.*) /remote.php last;
+#        rewrite ^(/core/doc/[^\/]+/)$ $1/index.html;
+#        try_files $uri $uri/ /index.php;
+#    }
+#
+#    location ~ \.php(?:$|/) {
+#        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+#        include fastcgi_params;
+#        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+#        fastcgi_param PATH_INFO $fastcgi_path_info;
+#        fastcgi_param modHeadersAvailable true; #Avoid sending the security headers twice
+#        fastcgi_pass php7:9000;
+#        fastcgi_intercept_errors on;
+#    }
+#
+#    # Adding the cache control header for js and css files
+#    # Make sure it is BELOW the location ~ \.php(?:$|/) { block
+#    location ~* \.(?:css|js)$ {
+#        add_header Cache-Control "public, max-age=7200";
+#        # Add headers to serve security related headers
+#        add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
+#        add_header X-Content-Type-Options nosniff;
+#        add_header X-Frame-Options "SAMEORIGIN";
+#        add_header X-XSS-Protection "1; mode=block";
+#        add_header X-Robots-Tag none;
+#        # Don't log access to assets
+#        access_log off;
+#    }
+#
+#    # Don't log access to other assets
+#    location ~* \.(?:jpg|jpeg|gif|bmp|ico|png|swf)$ {
+#        access_log off;
+#    }
 }
