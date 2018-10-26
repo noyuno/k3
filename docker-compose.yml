@@ -3,6 +3,7 @@ services:
     nginx:
         image: steveltn/https-portal:1
         links:
+            - php7
             - gitbucket
         ports:
             - 80:80
@@ -17,36 +18,6 @@ services:
             - ./nginx/conf:/var/lib/nginx-conf:ro
             - ./nginx/html:/var/www/html
             - owncloud:/var/www/owncloud
-    php7:
-        image: php:7-fpm-alpine
-        restart: always
-        links:
-          - owncloud
-          - nginx
-        volumes:
-            - ./nginx/html:/var/www/html
-            - owncloud:/var/www/owncloud
-    gitbucket:
-        image: gitbucket/gitbucket
-        restart: always
-        volumes:
-            - ./data/gitbucket/data:/gitbucket
-        links:
-            - gitbucket-postgres
-        environment:
-            GITBUCKET_DB_URL: 'jdbc:postgresql://gitbucket-postgres/gitbucket'
-            GITBUCKET_DB_USER: gitbucket
-            GITBUCKET_DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
-
-    gitbucket-postgres:
-        build: gitbucket/postgres
-        restart: always
-        volumes:
-            - ./data/gitbucket/postgres:/var/lib/postgresql/data
-            - ./gitbucket/postgres/init:/docker-entrypoint-initdb.d
-        environment:
-            POSTGRES_USER: postgres
-            DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
 
     owncloud:
         image: owncloud/server:10.0
@@ -78,6 +49,33 @@ services:
         volumes:
             - ./data/owncloud/mariadb:/var/lib/mysql
             - ./data/owncloud/mariadb-backup:/var/lib/backup
+    php7:
+        image: php:7-fpm-alpine
+        restart: always
+        volumes:
+            - ./nginx/html:/var/www/html
+            - owncloud:/var/www/owncloud
+    gitbucket:
+        image: gitbucket/gitbucket
+        restart: always
+        volumes:
+            - ./data/gitbucket/data:/gitbucket
+        links:
+            - gitbucket-postgres
+        environment:
+            GITBUCKET_DB_URL: 'jdbc:postgresql://gitbucket-postgres/gitbucket'
+            GITBUCKET_DB_USER: gitbucket
+            GITBUCKET_DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
+
+    gitbucket-postgres:
+        build: gitbucket/postgres
+        restart: always
+        volumes:
+            - ./data/gitbucket/postgres:/var/lib/postgresql/data
+            - ./gitbucket/postgres/init:/docker-entrypoint-initdb.d
+        environment:
+            POSTGRES_USER: postgres
+            DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
     
     redis:
         image: redis:5-alpine
