@@ -26,7 +26,7 @@ services:
             - ./nginx/html:/var/www/html
             - owncloud:/var/www/owncloud
             - ./data/owncloud/data:/mnt/data
-        command: sh -c 'apk add shadow && addgroup -g 1001 owncloud ; usermod -aG owncloud www-data'
+        command: sh -c 'apk add shadow ; addgroup -g 1001 owncloud ; usermod -aG owncloud www-data ; php-fpm'
 
     gitbucket:
         image: gitbucket/gitbucket
