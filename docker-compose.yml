@@ -21,7 +21,7 @@ services:
         volumes:
             - ./data/cert:/var/lib/https-portal
             - ./nginx/conf:/var/lib/nginx-conf:ro
-            - ./nginx/html:/var/www/html
+            - ./nginx/html:/var/www/vhosts
 
     php7:
         image: php:7-fpm-alpine
