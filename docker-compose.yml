@@ -3,7 +3,6 @@ services:
     nginx:
         image: steveltn/https-portal:1
         links:
-            - php7
             - gitbucket
         ports:
             - 80:80
@@ -21,10 +20,12 @@ services:
     php7:
         image: php:7-fpm-alpine
         restart: always
+        links:
+          - owncloud
+          - nginx
         volumes:
             - ./nginx/html:/var/www/html
-        volumes_from:
-            - owncloud
+            - owncloud:/var/www/owncloud
     gitbucket:
         image: gitbucket/gitbucket
         restart: always
