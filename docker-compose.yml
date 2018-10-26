@@ -76,6 +76,8 @@ services:
     owncloud-db:
         image: mariadb:latest
         restart: always
+        expose:
+            - 3306
         environment:
             MYSQL_ROOT_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
             MYSQL_USER: owncloud
