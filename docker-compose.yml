@@ -26,7 +26,7 @@ services:
             - ./nginx/html:/var/www/html
             - owncloud:/var/www/owncloud
             - ./data/owncloud/data:/mnt/data
-        command: sh -c 'apk add shadow ; addgroup -g 1001 owncloud ; usermod -aG owncloud www-data ; php-fpm'
+        command: sh -c 'apk add shadow ; groupadd -g 2001 owncloud ; usermod -aG owncloud www-data ; php-fpm'
 
     gitbucket:
         image: gitbucket/gitbucket
@@ -68,6 +68,7 @@ services:
             - ./data/owncloud/data:/mnt/data
             # for nginx
             - owncloud:/var/www/owncloud
+        command: sh -c 'groupadd -g 2001 owncloud ; find /mnt/data | xargs chgrp owncloud'
 
     owncloud-mariadb:
         image: mariadb:10
