@@ -1,3 +1,4 @@
+# vi: set filetype=nginx :
 server {
     listen 443 ssl http2;
     server_name <%= domain.name %>;
@@ -12,6 +13,21 @@ server {
     ssl_prefer_server_ciphers on;
 
     ssl_dhparam <%= dhparam_path %>;
+
+    charset UTF-8;
+    charset_types text/css application/json text/plain application/javascript;
+    add_header 'Access-Control-Allow-Origin' '*' always;
+    add_header 'Access-Control-Allow-Credentials' 'true';
+    add_header 'Access-Control-Allow-Headers' 'Content-Type,Accept';
+    add_header 'Access-Control-Allow-Method' 'GET, POST, OPTIONS, PUT, DELETE';
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_redirect off;
+    proxy_max_temp_file_size 0;
+
+    gzip on;
+    gzip_types text/css application/javascript application/json application/font-woff application/font-tff image/gif image/png image/jpeg application/octet-stream;
 
     # Prevent Nginx from leaking the first TLS config
     if ($host != $server_name) {
@@ -42,6 +58,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        client_max_body_size    5G;
 
         <% if ENV['WEBSOCKET'] && ENV['WEBSOCKET'].downcase == 'true' %>
         proxy_http_version 1.1;
@@ -59,5 +76,31 @@ server {
         root   <%= domain.www_root %>;
         index  index.html;
     }
+    location ~ \.php$ {
+        root /var/www/html;
+        try_files $uri =404;
+        fastcgi_pass php7:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+    location ~ \.cgi$ {
+        root /var/www/html;
+        try_files $uri =404;
+        fastcgi_pass php7:9000;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+    location /cgi {
+        root /var/www/html;
+        try_files $uri =404;
+        fastcgi_pass php7:9000;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
     <% end %>
+
+    location /robots.txt {
+        alias /var/www/html/robots-disallow.txt;
+    }
 }
