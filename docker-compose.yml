@@ -18,6 +18,7 @@ services:
             - ./nginx/conf:/var/lib/nginx-conf:ro
             - ./nginx/html:/var/www/html
             - owncloud:/var/www/owncloud
+
     php7:
         image: php:7-fpm-alpine
         restart: always
@@ -25,8 +26,8 @@ services:
             - ./nginx/html:/var/www/html
             - owncloud:/var/www/owncloud
             - ./data/owncloud/data:/mnt/data
-        
-        command: bash -c 'usermod -aG 1001 www-data'
+        command: sh -c 'usermod -aG 1001 www-data'
+
     gitbucket:
         image: gitbucket/gitbucket
         restart: always
@@ -79,11 +80,11 @@ services:
         volumes:
             - ./data/owncloud/mariadb:/var/lib/mysql
             - ./data/owncloud/mariadb-backup:/var/lib/backup
-    
+
     redis:
         image: redis:5-alpine
         restart: always
-        
+ 
 volumes:
     owncloud:
 
