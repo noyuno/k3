@@ -55,7 +55,7 @@ services:
     owncloud:
         image: owncloud/server:latest
         links:
-            - owncloud-mariadb
+            - owncloud-db
             - redis
         environment:
             OWNCLOUD_DOMAIN: dir.noyu.cf
