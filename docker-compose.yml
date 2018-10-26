@@ -90,7 +90,7 @@ services:
     wekan:
         image: quay.io/wekan/wekan:latest
         restart: always
-        link:
+        links:
             wekan-db
         environment:
             ROOT_URL: https://board.noyu.cf
