@@ -26,7 +26,7 @@ services:
             - ./nginx/html:/var/www/html
             - owncloud:/var/www/owncloud
             - ./data/owncloud/data:/mnt/data
-        command: sh -c 'usermod -aG 1001 www-data'
+        command: sh -c 'addgroup -g 1001 www-data owncloud'
 
     gitbucket:
         image: gitbucket/gitbucket
