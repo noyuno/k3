@@ -2,10 +2,6 @@
 # This file overrides default nginx HTTPS settings for my.example.com
 # Mount this file as "/var/lib/nginx-conf/my.example.com.ssl.conf.erb"
 
-upstream php-handler {
-  server owncloud:9000;
-}
-
 server {
     listen 443 ssl http2;
     listen  [::]:443 ssl http2;
@@ -75,7 +71,7 @@ server {
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_param PATH_INFO $fastcgi_path_info;
         fastcgi_param modHeadersAvailable true; #Avoid sending the security headers twice
-        fastcgi_pass php-handler;
+        fastcgi_pass php7:9000;
         fastcgi_intercept_errors on;
     }
 
