@@ -6,6 +6,7 @@ services:
             - php7
             - gitbucket
             - owncloud
+            - wekan
         ports:
             - 80:80
             - 443:443
@@ -94,7 +95,7 @@ services:
             - wekan-db
         environment:
             ROOT_URL: https://board.noyu.cf
-            MONGO_URL: mongodb://wekan-mongodb:27017/wekan
+            MONGO_URL: mongodb://wekan-db:27017/wekan
             WITH_API: "true"
     
     wekan-db:
