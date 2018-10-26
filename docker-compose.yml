@@ -52,7 +52,7 @@ services:
             - redis
         environment:
             OWNCLOUD_DOMAIN: dir.noyu.cf
-            OWNCLOUD_DB_TYPE: mariadb
+            OWNCLOUD_DB_TYPE: mysql
             OWNCLOUD_DB_HOST: owncloud-mariadb
             OWNCLOUD_DB_NAME: owncloud
             OWNCLOUD_DB_USERNAME: owncloud
