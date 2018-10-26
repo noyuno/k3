@@ -91,7 +91,7 @@ services:
         image: quay.io/wekan/wekan:latest
         restart: always
         links:
-            wekan-db
+            - wekan-db
         environment:
             ROOT_URL: https://board.noyu.cf
             MONGO_URL: mongodb://wekan-mongodb:27017/wekan
