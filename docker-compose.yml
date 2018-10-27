@@ -5,7 +5,7 @@ services:
         links:
             - php7
             - gitbucket
-            - owncloud
+            - minio
             - wekan
         ports:
             - 80:80
@@ -13,12 +13,12 @@ services:
         restart: always
         environment:
             STAGE: staging
-            DOMAINS: >
-                noyu.cf,
-                k2.noyu.cf,
-                git.noyu.cf -> http://gitbucket:8080,
-                dir.noyu.cf -> http://owncloud:8080,
-                board.noyu.cf -> http://wekan:8080,
+            DOMAINS: |
+                noyu.cf
+                k2.noyu.cf
+                git.noyu.cf -> http://gitbucket:8080
+                s3.noyu.cf -> http://minio:9000
+                board.noyu.cf -> http://wekan:8080
                 ci.noyu.cf -> http://jenkins:8080
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
@@ -54,42 +54,14 @@ services:
             POSTGRES_USER: postgres
             DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
 
-    owncloud:
-        image: owncloud/server:latest
-        links:
-            - owncloud-db
-            - redis
-        environment:
-            OWNCLOUD_DOMAIN: dir.noyu.cf
-            OWNCLOUD_DB_TYPE: mysql
-            OWNCLOUD_DB_HOST: owncloud-db
-            OWNCLOUD_DB_NAME: owncloud
-            OWNCLOUD_DB_USERNAME: owncloud
-            OWNCLOUD_DB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
-            OWNCLOUD_REDIS_ENABLED: "true"
-            OWNCLOUD_REDIS_HOST: redis
-            OWNCLOUD_ADMIN_USERNAME: noyuno
-            OWNCLOUD_ADMIN_PASSWORD: ${OWNCLOUD_PASSWORD}
+    minio:
+        image: minio/minio
         volumes:
-            - ./data/owncloud/data:/mnt/data
-
-    owncloud-db:
-        image: mariadb:latest
-        restart: always
-        expose:
-            - 3306
+            - ./data/minio/1:/data
         environment:
-            MYSQL_ROOT_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
-            MYSQL_USER: owncloud
-            MYSQL_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
-            MYSQL_DATABASE: owncloud
-        volumes:
-            - ./data/owncloud/mariadb:/var/lib/mysql
-            - ./data/owncloud/mariadb-backup:/var/lib/backup
-
-    redis:
-        image: redis:alpine
-        restart: always
+            MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+            MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+        command: server /data
 
     wekan:
         image: quay.io/wekan/wekan:latest
@@ -100,7 +72,7 @@ services:
             ROOT_URL: https://board.noyu.cf
             MONGO_URL: mongodb://wekan-db:27017/wekan
             WITH_API: "true"
-    
+
     wekan-db:
         image: mongo:latest
         restart: always
@@ -111,9 +83,12 @@ services:
             - ./data/wekan/mongodb:/data/db
             - ./data/wekan/mongodb-dump:/dump
 
-    jenkins:
-        image: jenkins/jenkins:alpine
-        restart: always
-        volumes:
-            - ./data/jenkins:/var/jenkins_home
+    s3backup:
+        build: s3backup
+        entrypoint: aws
+        environment:
+            AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+
 
