@@ -83,12 +83,3 @@ services:
             - ./data/wekan/mongodb:/data/db
             - ./data/wekan/mongodb-dump:/dump
 
-    s3backup:
-        build: s3backup
-        entrypoint: aws
-        environment:
-            AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-            AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
-
-
