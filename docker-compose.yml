@@ -7,6 +7,7 @@ services:
             - gitbucket
             - minio
             - wekan
+            - notifyd
         ports:
             - 80:80
             - 443:443
@@ -21,11 +22,15 @@ services:
                 board.noyu.cf -> http://wekan:8080
                 ci.noyu.cf -> http://jenkins:8080
                 job.noyu.cf -> http://rundeck:4443
+                anime.noyu.cf
+                notify.noyu.cf -> http;//notifyd:4000
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
             - ./data/cert:/var/lib/https-portal
             - ./nginx/conf:/var/lib/nginx-conf:ro
             - ./nginx/html:/var/www/vhosts
+            - ./animed/html:/var/www/vhosts/anime.noyu.cf
+            - ./data/animed:/var/www/vhosts/anime.noyu.cf/data
 
     php7:
         image: php:7-fpm-alpine
@@ -42,8 +47,8 @@ services:
             - gitbucket-db
         environment:
             GITBUCKET_DB_URL: 'jdbc:postgresql://gitbucket-postgres/gitbucket'
-            GITBUCKET_DB_USER: gitbucket
-            GITBUCKET_DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
+            GITBUCKET_DB_USER: postgres
+            POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
 
     gitbucket-db:
         build: gitbucket/postgres
@@ -85,21 +90,38 @@ services:
             - ./data/wekan/mongodb-dump:/dump
 
     rundeck:
-        build: jordan/rundeck:latest
+        image: jordan/rundeck:latest
         environment:
             EXTERNAL_SERVER_URL: https://job.noyu.cf
             RUNDECK_ADMIN_PASSWORD: ${RUNDECK_ADMIN_PASSWORD}
-            
 
-    anime:
-        build: anime
+    animed:
+        build: animed
         restart: always
         volumes:
-            - ./data/anime:/data
+            - ./data/animed:/data
 
     notifyd:
-        build: ./notifyd
+        build: notifyd
+        links:
+            - notifyd-db
+        environment:
+            NOTIFYD_PATH: /opt/notifyd
+            NOTIFYD_DATA: /data/notifyd
+            NOTIFYD_DB_HOST: notifyd-db
+            NOTIFYD_DB_USER: postgres
+            NOTIFYD_DB_PASSWORD: ${NOTIFYD_DB_PASSWORD}
+            MIX_ENV: prod
+            HOSTNAME: notify.noyu.cf
+            PORT: 4000
+
+    notifyd-db:
+        build: notifyd/postgres
         restart: always
         volumes:
-            - ./data/notifyd:/data
+            - ./data/notifyd/postgres:/var/lib/postgresql/data
+            - ./notifyd/postgres/init:/docker-entrypoint-initdb.d
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: ${NOTIFYD_DB_PASSWORD}
 

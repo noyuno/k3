@@ -1,3 +1,6 @@
 [submodule "notifyd"]
 	path = notifyd
 	url = git@github.com:noyuno/notifyd.git
+[submodule "animed"]
+	path = animed
+	url = git@github.com:noyuno/animed.git
