@@ -39,26 +39,25 @@ services:
             - ./nginx/html:/var/www/html
 
     gitbucket:
-        image: gitbucket/gitbucket
+        image: gitbucket/gitbucket:latest
         restart: always
         volumes:
             - ./data/gitbucket/data:/gitbucket
         links:
             - gitbucket-db
         environment:
-            GITBUCKET_DB_URL: 'jdbc:postgresql://gitbucket-postgres/gitbucket'
-            GITBUCKET_DB_USER: postgres
-            POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
+            GITBUCKET_DB_URL: 'jdbc:postgresql://gitbucket-db/gitbucket'
+            GITBUCKET_DB_USER: gitbucket
+            GITBUCKET_DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
 
     gitbucket-db:
-        build: gitbucket/postgres
+        image: postgres:11-alpine
         restart: always
         volumes:
             - ./data/gitbucket/postgres:/var/lib/postgresql/data
-            - ./gitbucket/postgres/init:/docker-entrypoint-initdb.d
         environment:
-            POSTGRES_USER: postgres
-            DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
+            POSTGRES_USER: gitbucket
+            POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
 
     minio:
         image: minio/minio:latest
@@ -109,19 +108,41 @@ services:
             NOTIFYD_PATH: /opt/notifyd
             NOTIFYD_DATA: /data/notifyd
             NOTIFYD_DB_HOST: notifyd-db
-            NOTIFYD_DB_USER: postgres
+            NOTIFYD_DB_USER: notifyd
             NOTIFYD_DB_PASSWORD: ${NOTIFYD_DB_PASSWORD}
             MIX_ENV: prod
             HOSTNAME: notify.noyu.cf
             PORT: 4000
 
     notifyd-db:
-        build: notifyd/postgres
+        image: postgres:11-alpine
         restart: always
+        environment:
+            POSTGRES_USER: notifyd
+            POSTGRES_PASSWORD: ${NOTIFYD_DB_PASSWORD}
         volumes:
             - ./data/notifyd/postgres:/var/lib/postgresql/data
-            - ./notifyd/postgres/init:/docker-entrypoint-initdb.d
+
+    concourse:
+        image: concourse/concourse
+        command: quickstart
+        privileged: true
+        links: 
+            - concourse-db
+        ports: 
+            - 8080:8080
         environment:
-            POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: ${NOTIFYD_DB_PASSWORD}
+            CONCOURSE_POSTGRES_HOST: concourse-db
+            CONCOURSE_POSTGRES_USER: concourse
+            CONCOURSE_POSTGRES_PASSWORD: ${CONCOURSE_DB_PASSWORD}
+            CONCOURSE_POSTGRES_DATABASE: concourse
+
+    concourse-db:
+        image: postgres:11-alpine
+        restart: always
+        environment:
+            POSTGRES_USER: concourse
+            POSTGRES_PASSWORD: concourse_pass
+        volumes:
+            - ./data/concourse/postgres:/var/lib/postgresql/data
 
