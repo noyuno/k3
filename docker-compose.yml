@@ -27,8 +27,8 @@ services:
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
             - ./data/cert:/var/lib/https-portal
-            - ./nginx/conf:/var/lib/nginx-conf:ro
-            - ./nginx/html:/var/www/vhosts
+            - ./nginx:/var/lib/nginx-conf:ro
+            - ./html:/var/www/vhosts
             - ./animed/html:/var/www/vhosts/anime.noyu.cf
             - ./data/animed:/var/www/vhosts/anime.noyu.cf/data
 
@@ -53,20 +53,20 @@ services:
     gitbucket-db:
         image: postgres:11-alpine
         restart: always
-        volumes:
-            - ./data/gitbucket/postgres:/var/lib/postgresql/data
         environment:
             POSTGRES_USER: gitbucket
             POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
+        volumes:
+            - ./data/gitbucket/postgres:/var/lib/postgresql/data
 
     minio:
         image: minio/minio:latest
-        volumes:
-            - ./data/minio/1:/data
         environment:
             MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
             MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
         command: server /data
+        volumes:
+            - ./data/minio/1:/data
 
     wekan:
         image: quay.io/wekan/wekan:latest
@@ -110,6 +110,7 @@ services:
             NOTIFYD_DB_HOST: notifyd-db
             NOTIFYD_DB_USER: notifyd
             NOTIFYD_DB_PASSWORD: ${NOTIFYD_DB_PASSWORD}
+            NOTOFYD_SECRET_KEY_BASE: ${NOTIFYD_SECRET_KEY_BASE}
             MIX_ENV: prod
             HOSTNAME: notify.noyu.cf
             PORT: 4000
