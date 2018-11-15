@@ -4,3 +4,6 @@
 [submodule "animed"]
 	path = animed
 	url = git@github.com:noyuno/animed.git
+[submodule "squid"]
+	path = squid
+	url = git@github.com:noyuno/squid.git
