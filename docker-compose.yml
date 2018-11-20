@@ -111,9 +111,14 @@ services:
             NOTIFYD_DB_USER: notifyd
             NOTIFYD_DB_PASSWORD: ${NOTIFYD_DB_PASSWORD}
             NOTOFYD_SECRET_KEY_BASE: ${NOTIFYD_SECRET_KEY_BASE}
-            MIX_ENV: prod
+            NOTIFYD_GUARDIAN_SECRET_KEY_K: ${NOTIFYD_GUARDIAN_SECRET_KEY_K}
+            NOTIFYD_GUARDIAN_SECRET_KEY_KTY: ${NOTIFYD_GUARDIAN_SECRET_KEY_KTY}
+            MIX_ENV: dev
             HOSTNAME: notify.noyu.cf
             PORT: 4000
+        volumes:
+            - ./notifyd:/opt/notifyd
+            - ./data/notifyd/data:/data/notifyd
 
     notifyd-db:
         image: postgres:11-alpine
@@ -146,4 +151,10 @@ services:
             POSTGRES_PASSWORD: concourse_pass
         volumes:
             - ./data/concourse/postgres:/var/lib/postgresql/data
+
+    squid:
+        build: squid
+        restart: always
+        ports:
+            - 3128:3128
 
