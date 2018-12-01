@@ -1,3 +1,7 @@
 .env
 data
+go/pkg
+go/bin
+go/src/*
+!go/src/notifyd
 
