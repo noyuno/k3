@@ -101,21 +101,24 @@ services:
             - ./data/animed:/data
 
     notifyd:
-        build: go/src/notifyd
+        build: notifyd
         links:
             - notifyd-db
         environment:
-            NOTIFYD_PATH: /go/src/notifyd
+            NOTIFYD_PATH: /opt/notifyd
             NOTIFYD_DATA: /data/notifyd
             NOTIFYD_DB_HOST: notifyd-db
             NOTIFYD_DB_USER: notifyd
             NOTIFYD_DB_PASSWORD: ${NOTIFYD_DB_PASSWORD}
-            NOTIFYD_APP_SECRET: ${NOTIFYD_APP_SECRET}
+            NOTOFYD_SECRET_KEY_BASE: ${NOTIFYD_SECRET_KEY_BASE}
+            NOTIFYD_GUARDIAN_SECRET_KEY_K: ${NOTIFYD_GUARDIAN_SECRET_KEY_K}
+            NOTIFYD_GUARDIAN_SECRET_KEY_KTY: ${NOTIFYD_GUARDIAN_SECRET_KEY_KTY}
+            NOTIFYD_GUARDIAN_SECRET_KEY: ${NOTIFYD_GUARDIAN_SECRET_KEY}
+            MIX_ENV: dev
             HOSTNAME: notify.noyu.cf
-            PORT: 9000
-            GOPATH: /go
+            PORT: 4000
         volumes:
-            - ./go/src/notifyd:/go/src/notifyd
+            - ./notifyd:/opt/notifyd
             - ./data/notifyd/data:/data/notifyd
 
     notifyd-db:
