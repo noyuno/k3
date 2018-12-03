@@ -1,5 +1,5 @@
 [submodule "notifyd"]
-	path = go/src/notifyd
+	path = notifyd
 	url = git@github.com:noyuno/notifyd.git
 [submodule "animed"]
 	path = animed
@@ -7,6 +7,3 @@
 [submodule "squid"]
 	path = squid
 	url = git@github.com:noyuno/squid.git
-[submodule "go/src/notifyd"]
-	path = go/src/notifyd
-	url = git@github.com:noyuno/notifyd.git
