@@ -108,12 +108,13 @@ services:
             NOTIFYD_PATH: /opt/notifyd
             NOTIFYD_DATA: /data/notifyd
             NOTIFYD_DB_HOST: notifyd-db
+            NOTIFYD_DB_DATABASE: notifyd_dev
             NOTIFYD_DB_USER: notifyd
             NOTIFYD_DB_PASSWORD: ${NOTIFYD_DB_PASSWORD}
-            NOTOFYD_SECRET_KEY_BASE: ${NOTIFYD_SECRET_KEY_BASE}
-            NOTIFYD_GUARDIAN_SECRET_KEY_K: ${NOTIFYD_GUARDIAN_SECRET_KEY_K}
-            NOTIFYD_GUARDIAN_SECRET_KEY_KTY: ${NOTIFYD_GUARDIAN_SECRET_KEY_KTY}
+            NOTIFYD_SECRET_KEY_BASE: ${NOTIFYD_SECRET_KEY_BASE}
             NOTIFYD_GUARDIAN_SECRET_KEY: ${NOTIFYD_GUARDIAN_SECRET_KEY}
+            NOTIFYD_USERNAME: ${NOTIFYD_USERNAME}
+            NOTIFYD_PASSWORD: ${NOTIFYD_PASSWORD}
             MIX_ENV: dev
             HOSTNAME: notify.noyu.cf
             PORT: 4000
