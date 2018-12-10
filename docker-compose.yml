@@ -115,7 +115,7 @@ services:
             NOTIFYD_GUARDIAN_SECRET_KEY: ${NOTIFYD_GUARDIAN_SECRET_KEY}
             NOTIFYD_USERNAME: notifyd
             NOTIFYD_PASSWORD: ${NOTIFYD_PASSWORD}
-            MIX_ENV: dev
+            MIX_ENV: ${NOTIFYD_MIX_ENV}
             HOSTNAME: notify.noyu.cf
             PORT: 4000
         volumes:
