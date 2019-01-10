@@ -7,3 +7,6 @@
 [submodule "squid"]
 	path = squid
 	url = git@github.com:noyuno/squid.git
+[submodule "discordbot"]
+	path = discordbot
+	url = git@github.com:noyuno/discordbot.git

@@ -7,7 +7,6 @@ services:
             - gitbucket
             - minio
             - wekan
-            - notifyd
         ports:
             - 80:80
             - 443:443
@@ -23,7 +22,6 @@ services:
                 ci.noyu.cf -> http://jenkins:8080
                 job.noyu.cf -> http://rundeck:4443
                 anime.noyu.cf
-                notify.noyu.cf -> http;//notifyd:4000
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
             - ./data/cert:/var/lib/https-portal
@@ -100,36 +98,15 @@ services:
         volumes:
             - ./data/animed:/data
 
-    notifyd:
-        build: notifyd
-        links:
-            - notifyd-db
-        environment:
-            NOTIFYD_PATH: /opt/notifyd
-            NOTIFYD_DATA: /data/notifyd
-            NOTIFYD_DB_HOST: notifyd-db
-            NOTIFYD_DB_DATABASE: notifyd_dev
-            NOTIFYD_DB_USER: notifyd
-            NOTIFYD_DB_PASSWORD: ${NOTIFYD_DB_PASSWORD}
-            NOTIFYD_SECRET_KEY_BASE: ${NOTIFYD_SECRET_KEY_BASE}
-            NOTIFYD_GUARDIAN_SECRET_KEY: ${NOTIFYD_GUARDIAN_SECRET_KEY}
-            NOTIFYD_USERNAME: notifyd
-            NOTIFYD_PASSWORD: ${NOTIFYD_PASSWORD}
-            MIX_ENV: ${NOTIFYD_MIX_ENV}
-            HOSTNAME: notify.noyu.cf
-            PORT: 4000
-        volumes:
-            - ./notifyd:/opt/notifyd
-            - ./data/notifyd/data:/data/notifyd
-
-    notifyd-db:
-        image: postgres:11-alpine
+    discordbot:
+        build: discordbot
         restart: always
-        environment:
-            POSTGRES_USER: notifyd
-            POSTGRES_PASSWORD: ${NOTIFYD_DB_PASSWORD}
         volumes:
-            - ./data/notifyd/postgres:/var/lib/postgresql/data
+            - ./data/discordbot:/data/discordbot/out
+        environment:
+            DEPLOY: /data/discordbot
+            YAHOO_APPID: ${YAHOO_APPID}
+            ANIMEJSON: /data/animed/anime.json
 
     concourse:
         image: concourse/concourse
