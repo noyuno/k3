@@ -135,6 +135,6 @@ services:
     squid:
         build: squid
         restart: always
-        ports:
-            - 3128:3128
+        expose:
+            - "3128"
 
