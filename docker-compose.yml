@@ -14,21 +14,21 @@ services:
         environment:
             STAGE: staging
             DOMAINS: |
-                noyu.cf
-                k2.noyu.cf
-                git.noyu.cf -> http://gitbucket:8080
-                s3.noyu.cf -> http://minio:9000
-                board.noyu.cf -> http://wekan:8080
-                ci.noyu.cf -> http://jenkins:8080
-                job.noyu.cf -> http://rundeck:4443
-                anime.noyu.cf
+                ${DOMAIN}
+                ${HOST}.${DOMAIN}
+                git.${DOMAIN} -> http://gitbucket:8080
+                s3.${DOMAIN} -> http://minio:9000
+                board.${DOMAIN} -> http://wekan:8080
+                ci.${DOMAIN} -> http://concourse:8080
+                job.${DOMAIN} -> http://dkron:80
+                anime.${DOMAIN}
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
             - ./data/cert:/var/lib/https-portal
             - ./nginx:/var/lib/nginx-conf:ro
             - ./html:/var/www/vhosts
-            - ./animed/html:/var/www/vhosts/anime.noyu.cf
-            - ./data/animed:/var/www/vhosts/anime.noyu.cf/data
+            - ./animed/html:/var/www/vhosts/anime.${DOMAIN}
+            - ./data/animed:/var/www/vhosts/anime.${DOMAIN}/data
 
     php7:
         image: php:7-fpm-alpine
@@ -49,13 +49,30 @@ services:
             GITBUCKET_DB_PASSWORD: ${GITBUCKET_DB_PASSWORD}
 
     gitbucket-db:
-        image: postgres:11-alpine
+        image: postgres:10.5-alpine
         restart: always
         environment:
             POSTGRES_USER: gitbucket
             POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
         volumes:
             - ./data/gitbucket/postgres:/var/lib/postgresql/data
+
+    gitbucket-db-backup:
+        build: postgres-backup-s3
+        links:
+            - gitbucket-db
+        environment:
+            S3_REGION: ap-northeast-1
+            S3_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+            S3_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
+            S3_BUCKET: ${S3_BUCKET}
+            S3_PREFIX: backup/db/gitbucket
+            POSTGRES_HOST: gitbucket-db
+            POSTGRES_DATABASE: gitbucket
+            POSTGRES_USER: gitbucket
+            POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
+            POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
+            SCHEDULE: '@daily'
 
     minio:
         image: minio/minio:latest
@@ -64,7 +81,7 @@ services:
             MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
         command: server /data
         volumes:
-            - ./data/minio/1:/data
+            - ./data/minio:/data
 
     wekan:
         image: quay.io/wekan/wekan:latest
@@ -72,7 +89,7 @@ services:
         links:
             - wekan-db
         environment:
-            ROOT_URL: https://board.noyu.cf
+            ROOT_URL: https://board.${DOMAIN}
             MONGO_URL: mongodb://wekan-db:27017/wekan
             WITH_API: "true"
 
@@ -86,23 +103,28 @@ services:
             - ./data/wekan/mongodb:/data/db
             - ./data/wekan/mongodb-dump:/dump
 
-    rundeck:
-        image: jordan/rundeck:latest
+    backupd:
+        build: backupd
+        restart: always
         environment:
-            EXTERNAL_SERVER_URL: https://job.noyu.cf
-            RUNDECK_ADMIN_PASSWORD: ${RUNDECK_ADMIN_PASSWORD}
+            ACCESS_KEY: ${AWS_ACCESS_KEY}
+            SECRET_KEY: ${AWS_SECRET_KEY}
+            S3_PATH: s3://${S3_BUCKET}/backup/files/
+            CRON_SCHEDULE: "0 4 * * *"
+        volumes:
+            - ./data:/data:ro
 
     animed:
         build: animed
-        restart: always
+        estart: always
         volumes:
             - ./data/animed:/data
 
     discordbot:
         build: discordbot
         restart: always
-        ports:
-            - 80:80
+        expose:
+            - "80"
         volumes:
             - ./data/discordbot:/data/discordbot/out
         environment:
@@ -111,29 +133,6 @@ services:
             ANIMEJSON: /data/animed/anime.json
             DISCORD_TOKEN: ${DISCORD_TOKEN}
             DISCORD_CHANNEL_NAME: ${DISCORD_CHANNEL_NAME}
-
-    concourse:
-        image: concourse/concourse
-        command: quickstart
-        privileged: true
-        links: 
-            - concourse-db
-        ports: 
-            - 8080:8080
-        environment:
-            CONCOURSE_POSTGRES_HOST: concourse-db
-            CONCOURSE_POSTGRES_USER: concourse
-            CONCOURSE_POSTGRES_PASSWORD: ${CONCOURSE_DB_PASSWORD}
-            CONCOURSE_POSTGRES_DATABASE: concourse
-
-    concourse-db:
-        image: postgres:11-alpine
-        restart: always
-        environment:
-            POSTGRES_USER: concourse
-            POSTGRES_PASSWORD: concourse_pass
-        volumes:
-            - ./data/concourse/postgres:/var/lib/postgresql/data
 
     squid:
         build: squid

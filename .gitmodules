@@ -10,3 +10,9 @@
 [submodule "discordbot"]
 	path = discordbot
 	url = git@github.com:noyuno/discordbot.git
+[submodule "backupd"]
+	path = backupd
+	url = git@github.com:noyuno/backupd.git
+[submodule "postgresd"]
+	path = postgresd
+	url = git@github.com:noyuno/postgresd.git
