@@ -11,8 +11,8 @@ coreos:
             [Match]
             Name=eth0
             [Network]
-            Address=133.18.202.146/23
-            Gateway=133.18.202.1
+            Address=133.18.204.178/23
+            Gateway=133.18.204.1
             DNS=210.134.55.219
             DNS=210.134.48.31
         - name: etcd.service
