@@ -34,26 +34,6 @@ coreos:
           mask: true
         - name: iptables-restore.service
           enable: true
-          #        - name: dbdump.timer
-          #          content: |
-          #            [Unit]
-          #            Description=dbdump timer
-          #            [Timer]
-          #            OnBootSec=1min
-          #            OnUnitActiveSec=1d
-          #            Unit=dbdump.service
-          #            [Install]
-          #            WantedBy=multi-user.target
-          #        - name: dbdump.service
-          #            [Unit]
-          #            Description=dbdump service
-          #            [Service]
-          #            Type=simple
-          #            ExecStart=/home/noyuno/k2/coreos/dbdump
-          #            User=noyuno
-          #            WorkingDirectory=/home/noyuno/k2
-          #            [Install]
-          #            WantedBy=multi-user.target
 write_files:
   - path: /etc/ssh/sshd_config
     permissions: 0600
