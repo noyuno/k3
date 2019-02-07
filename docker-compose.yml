@@ -116,7 +116,7 @@ services:
 
     animed:
         build: animed
-        estart: always
+        restart: always
         volumes:
             - ./data/animed:/data
 
