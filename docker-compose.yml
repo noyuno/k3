@@ -19,13 +19,11 @@ services:
                 git.${DOMAIN} -> http://gitbucket:8080
                 s3.${DOMAIN} -> http://minio:9000
                 board.${DOMAIN} -> http://wekan:8080
-                ci.${DOMAIN} -> http://concourse:8080
-                job.${DOMAIN} -> http://dkron:80
                 anime.${DOMAIN}
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
             - ./data/cert:/var/lib/https-portal
-            - ./nginx:/var/lib/nginx-conf:ro
+            #- ./nginx:/var/lib/nginx-conf:ro
             - ./html:/var/www/vhosts
             - ./animed/html:/var/www/vhosts/anime.${DOMAIN}
             - ./data/animed:/var/www/vhosts/anime.${DOMAIN}/data
