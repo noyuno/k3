@@ -111,6 +111,7 @@ services:
             CRON_SCHEDULE: "0 4 * * *"
         volumes:
             - ./data:/data:ro
+        #command: no-cron
 
     animed:
         build: animed
