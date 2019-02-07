@@ -1,4 +1,4 @@
 # k2
 
-update submodules: `git submodule foreach git pull orogin master`
+update submodules: `git submodule foreach git pull origin master`
 
