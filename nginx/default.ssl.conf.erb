@@ -59,5 +59,30 @@ server {
         root   <%= domain.www_root %>;
         index  index.html;
     }
+    location ~ \.php$ {
+        root /var/www/html;
+        try_files $uri =404;
+        fastcgi_pass php7:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+    location ~ \.cgi$ {
+        root /var/www/html;
+        try_files $uri =404;
+        fastcgi_pass php7:9000;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+    location /cgi {
+        root /var/www/html;
+        try_files $uri =404;
+        fastcgi_pass php7:9000;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
     <% end %>
+    location /robots.txt {
+        alias /var/www/html/robots-disallow.txt;
+    }
 }
