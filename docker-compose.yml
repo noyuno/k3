@@ -12,7 +12,7 @@ services:
             - 443:443
         restart: always
         environment:
-            STAGE: staging
+            STAGE: production
             DOMAINS: |
                 ${DOMAIN},
                 ${HOST}.${DOMAIN},
@@ -128,7 +128,6 @@ services:
         environment:
             DEPLOY: /data/discordbot
             YAHOO_APPID: ${YAHOO_APPID}
-            ANIMEJSON: /data/animed/anime.json
             DISCORD_TOKEN: ${DISCORD_TOKEN}
             DISCORD_CHANNEL_NAME: ${DISCORD_CHANNEL_NAME}
 
