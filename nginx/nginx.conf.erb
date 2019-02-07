@@ -103,8 +103,10 @@ http {
         ssl on;
         server_name _;
 
-        ssl_certificate /var/lib/https-portal/noyu.cf/staging/signed.crt;
-        ssl_certificate_key /var/lib/https-portal/noyu.cf/staging/domain.key;
+        #ssl_certificate /var/lib/https-portal/<%= domain.name %>/staging/signed.crt;
+        #ssl_certificate_key /var/lib/https-portal/<%= domain.name %>/staging/domain.key;
+        ssl_certificate <%= domain.chained_cert_path %>;
+        ssl_certificate_key <%= domain.key_path %>;
 
         root /var/www/html;
         try_files /domain-404.html =404;
