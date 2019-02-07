@@ -92,7 +92,7 @@ write_files:
 
 users:
     - name: noyuno
-      passwd: "$1$l9A5cLrg$AePMoJq2jthLtlwJMMYjg0"
+      passwd: "$1$oKvpM9UD$J/AT5eK5IcfkBTleI9pzM1"
       groups:
           - sudo
           - wheel
@@ -102,5 +102,4 @@ users:
           - rkt
       ssh_authorized_keys:
           - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDvdP3b+COQqOevcnTpb8S/LbEygh8yVC82lO2pMpHqtwRwSean1DnYbP0sgsF3Tkz3c+z+p52c8SJtPCIswLoxdOHqsl8Ylpv4AvdggbJbItN05CyfHEoHvybcgYvMGUl6kWq6N08o8HChMv3mIl0iUNopuExolMVLXlte7Dtm1p7QaWaQGN3TC54GaQlzVjee9K8N7FJ0w85huPKCETwDiqWBSoQbjlR1VbWLGbxvB51ZR6fOzsXHLHKhZY3zt3d2b/D7z34DP19z5kU8ifYKG74zBK8sFwyTp7aPPl+hY7U2fvYbRyF4qicbgsw6VuKCV2MiYPcOcq/qUDaEjJ99 noyuno@arch
-
 
