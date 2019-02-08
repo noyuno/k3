@@ -76,7 +76,7 @@ services:
             POSTGRES_USER: gitbucket
             POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
-            #SCHEDULE: '@daily'
+            SCHEDULE: '@daily'
 
     minio:
         image: minio/minio:latest
