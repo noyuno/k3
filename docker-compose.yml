@@ -134,10 +134,62 @@ services:
             DISCORD_TOKEN: ${DISCORD_TOKEN}
             DISCORD_CHANNEL_NAME: ${DISCORD_CHANNEL_NAME}
 
-    grafana:
-        image: grafana/grafana:latest
+    prometheus:
+        image: prom/prometheus
+        restart: always
+        volumes:
+            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
         expose:
-            - "3000"
+            - 9090
+        links:
+            - cadvisor
+            - node-exporter
+        environment:
+            VIRTUAL_HOST: status.${HOST}.${DOMAIN}
+            #LETSENCRYPT_HOST: prometheus.prometheus.example.com
+            #LETSENCRYPT_EMAIL: hoge@example.com
+
+    cadvisor:
+        image: google/cadvisor:latest
+        restart: always
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        expose:
+            - 8080
+
+    node-exporter:
+        image: prom/node-exporter
+        restart: always
+        volumes:
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /:/rootfs:ro
+        expose:
+            - 9100
+
+    grafana:
+        image: grafana/grafana
+        restart: always
+        expose:
+            - 3000
+        user: "0"
+        links:
+            - prometheus
+            - cadvisor
+            - node-exporter
+        volumes:
+            - ./data/grafana:/var/lib/grafana
+        environment:
+            GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+            GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+            GF_USERS_ALLOW_SIGN_UP: "false"
+            GF_USERS_ALLOW_ORG_CREATE: "false"
+            VIRTUAL_HOST: ${HOST}.${DOMAIN}
+            #LETSENCRYPT_HOST: prometheus.example.com
+            #LETSENCRYPT_EMAIL: hoge@example.com
 
     squid:
         build: squid
