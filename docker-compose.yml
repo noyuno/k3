@@ -60,9 +60,12 @@ services:
 
     gitbucket-db-backup:
         build: postgres-backup-s3
+        restart: always
         links:
             - gitbucket-db
+            - discordbot
         environment:
+            CONTAINER_NAME: gitbucket-db-backup
             S3_REGION: ap-northeast-1
             S3_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
             S3_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
@@ -73,10 +76,11 @@ services:
             POSTGRES_USER: gitbucket
             POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
-            SCHEDULE: '@daily'
+            #SCHEDULE: '@daily'
 
     minio:
         image: minio/minio:latest
+        restart: always
         environment:
             MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
             MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
@@ -107,6 +111,8 @@ services:
     backupd:
         build: backupd
         restart: always
+        links:
+            - discordbot
         environment:
             ACCESS_KEY: ${AWS_ACCESS_KEY}
             SECRET_KEY: ${AWS_SECRET_KEY}
@@ -127,6 +133,8 @@ services:
         restart: always
         expose:
             - "80"
+        #ports:
+        #    - "80:80"
         volumes:
             - ./data/discordbot:/data/discordbot/out
             - ./discordbot:/opt
@@ -192,10 +200,11 @@ services:
             VIRTUAL_HOST: ${HOST}.${DOMAIN}
             #LETSENCRYPT_HOST: prometheus.example.com
             #LETSENCRYPT_EMAIL: hoge@example.com
+    # import 395, 22
 
-    squid:
-        build: squid
-        restart: always
-        expose:
-            - "3128"
+    #squid:
+    #    build: squid
+    #    restart: always
+    #    expose:
+    #        - "3128"
 
