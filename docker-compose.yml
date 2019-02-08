@@ -19,7 +19,8 @@ services:
                 git.${DOMAIN} -> http://gitbucket:8080,
                 s3.${DOMAIN} -> http://minio:9000,
                 board.${DOMAIN} -> http://wekan:8080,
-                anime.${DOMAIN}
+                anime.${DOMAIN},
+                status.${DOMAIN} -> http://grafana:3000
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
         volumes:
             - ./data/cert:/var/lib/https-portal
@@ -120,17 +121,23 @@ services:
             - ./data/animed:/data
 
     discordbot:
-        build: discordbot
+        image: noyuno/discordbot:latest
         restart: always
         expose:
             - "80"
         volumes:
             - ./data/discordbot:/data/discordbot/out
+            - ./discordbot:/opt
         environment:
             DEPLOY: /data/discordbot
             YAHOO_APPID: ${YAHOO_APPID}
             DISCORD_TOKEN: ${DISCORD_TOKEN}
             DISCORD_CHANNEL_NAME: ${DISCORD_CHANNEL_NAME}
+
+    grafana:
+        image: grafana/grafana:latest
+        expose:
+            - "3000"
 
     squid:
         build: squid
