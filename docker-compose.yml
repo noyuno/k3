@@ -141,9 +141,11 @@ services:
             - ./discordbot:/opt
         environment:
             DEPLOY: /data/discordbot
-            YAHOO_APPID: ${YAHOO_APPID}
             DISCORD_TOKEN: ${DISCORD_TOKEN}
             DISCORD_CHANNEL_NAME: ${DISCORD_CHANNEL_NAME}
+            GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
+            DARK_SKY_API_KEY: ${DARK_SKY_API_KEY}
+            LOCATION: ${LOCATION}
 
     prometheus:
         image: prom/prometheus
