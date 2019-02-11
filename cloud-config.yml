@@ -31,7 +31,7 @@ coreos:
         - name: sshd.service
           enable: true
         - name: sshd.socket
-          enable: true
+          mask: true
         - name: iptables-restore.service
           enable: true
 write_files:
