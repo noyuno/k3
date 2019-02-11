@@ -15,8 +15,6 @@ coreos:
             Gateway=133.18.204.1
             DNS=210.134.55.219
             DNS=210.134.48.31
-        - name: fleet.service
-          command: start
         - name: settimezone.service
           command: start
           content: |
