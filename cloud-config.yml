@@ -4,7 +4,7 @@ hostname: k2
 
 coreos:
     update:
-        reboot-strategy: off
+        reboot-strategy: "etcd-lock"
     units:
         - name: 00-static.network
           content: |
