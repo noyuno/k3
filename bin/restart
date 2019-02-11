@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+c=docker-compose
+which $c 1>/dev/null 2>&1 || c=dc
+$c stop && $c up -d --build
+
