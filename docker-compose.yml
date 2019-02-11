@@ -136,6 +136,8 @@ services:
             - "80"
         #ports:
         #    - "80:80"
+        links:
+            - cadvisor
         volumes:
             - ./data/discordbot:/data/discordbot/out
             - ./discordbot:/opt
