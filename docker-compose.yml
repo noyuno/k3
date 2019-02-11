@@ -146,6 +146,8 @@ services:
             GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
             DARK_SKY_API_KEY: ${DARK_SKY_API_KEY}
             LOCATION: ${LOCATION}
+            CADVISOR: 'cadvisor:8080'
+            CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,wekan,wekan-db,backupd,animed,prometheus,node-exporter,grafana'
 
     prometheus:
         image: prom/prometheus
