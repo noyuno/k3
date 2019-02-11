@@ -209,9 +209,3 @@ services:
             #LETSENCRYPT_EMAIL: hoge@example.com
     # import 395, 22
 
-    #squid:
-    #    build: squid
-    #    restart: always
-    #    expose:
-    #        - "3128"
-
