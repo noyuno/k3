@@ -138,6 +138,7 @@ services:
         #    - "80:80"
         links:
             - cadvisor
+            - manet
         volumes:
             - ./data/discordbot:/data/discordbot/out
             - ./discordbot:/opt
@@ -149,6 +150,10 @@ services:
             DARK_SKY_API_KEY: ${DARK_SKY_API_KEY}
             LOCATION: ${LOCATION}
             CADVISOR: 'cadvisor:8080'
+            MANET: 'manet:8891'
+            XRAIN_LON: ${XRAIN_LON}
+            XRAIN_LAT: ${XRAIN_LAT}
+            XRAIN_ZOOM: ${XRAIN_ZOOM}
             CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,wekan,wekan-db,backupd,animed,prometheus,node-exporter,grafana'
 
     prometheus:
@@ -208,4 +213,10 @@ services:
             #LETSENCRYPT_HOST: prometheus.example.com
             #LETSENCRYPT_EMAIL: hoge@example.com
     # import 395, 22
+
+    manet:
+        image: bobey/manet
+        expose:
+            - "8891"
+        command: startup.sh --engine=phantomjs
 
