@@ -194,6 +194,7 @@ services:
             - /:/rootfs:ro
         expose:
             - 9100
+        command: -collector.filesystem.ignored-mount-points "^/(sys|proc|dev|host|etc)($|/)"
 
     grafana:
         image: grafana/grafana
