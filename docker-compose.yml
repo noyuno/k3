@@ -8,6 +8,8 @@ services:
             - minio
             - wekan
             - grafana
+            - animed
+            - portainer
         ports:
             - 80:80
             - 443:443
