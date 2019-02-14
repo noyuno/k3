@@ -21,7 +21,8 @@ services:
                 s3.${DOMAIN} -> http://minio:9000,
                 board.${DOMAIN} -> http://wekan:8080,
                 anime.${DOMAIN},
-                status.${DOMAIN} -> http://grafana:3000
+                status.${DOMAIN} -> http://grafana:3000,
+                dock.${DOMAIN} -> http://portainer:9000
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
             FORCE_RENEW: 'false'
             CLIENT_MAX_BODY_SIZE: '15g'
@@ -120,7 +121,7 @@ services:
             S3_PATH: s3://${S3_BUCKET}/backup/files/
             CRON_SCHEDULE: "46 17 * * *" # 2:46
         volumes:
-            - ./data:/data:ro
+            - ./:/data:ro
         #command: no-cron
 
     animed:
@@ -219,4 +220,14 @@ services:
         expose:
             - "8891"
         command: startup.sh --engine=phantomjs
+
+    portainer:
+        image: portainer/portainer
+        command: -H unix:///var/run/docker.sock
+        restart: always
+        expose:
+            - "9000"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./data/portrainer:/data
 
