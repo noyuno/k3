@@ -24,7 +24,8 @@ services:
                 board.${DOMAIN} -> http://wekan:8080,
                 anime.${DOMAIN},
                 status.${DOMAIN} -> http://grafana:3000,
-                dock.${DOMAIN} -> http://portainer:9000
+                portainer.${DOMAIN} -> http://portainer:9000,
+                photos.${DOMAIN} -> http://photod:80
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
             FORCE_RENEW: 'false'
             CLIENT_MAX_BODY_SIZE: '15g'
@@ -232,4 +233,23 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - ./data/portrainer:/data
+
+    photod:
+        image: noyuno/photod:latest
+        restart: always
+        expose:
+            - "80"
+        #ports:
+        #    - "8080:80"
+        links:
+            - discordbot
+        environment:
+            GOOGLE_OAUTH_CLIENT: ${GOOGLE_OAUTH_CLIENT}
+            GOOGLE_OAUTH_SECRET: ${GOOGLE_OAUTH_SECRET}
+            BASE_URL: "https://photos.noyuno.space"
+            #BASE_URL: "http://localhost:8080"
+            DISCORDBOT: "discordbot"
+        volumes:
+            - ./data/photod:/data/photod/out
+            - ./photod:/opt
 
