@@ -249,6 +249,10 @@ services:
             BASE_URL: "https://photos.noyuno.space"
             #BASE_URL: "http://localhost:8080"
             DISCORDBOT: "discordbot"
+            AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+            AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+            S3_BUCKET: ${S3_BUCKET}
+            AWS_REGION: ${S3_REGION}
         volumes:
             - ./data/photod:/data/photod/out
             - ./photod:/opt
