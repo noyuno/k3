@@ -158,7 +158,7 @@ services:
             XRAIN_LON: ${XRAIN_LON}
             XRAIN_LAT: ${XRAIN_LAT}
             XRAIN_ZOOM: ${XRAIN_ZOOM}
-            CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,wekan,wekan-db,backupd,animed,prometheus,node-exporter,grafana,manet'
+            CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,wekan,wekan-db,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod'
 
     prometheus:
         image: prom/prometheus
@@ -216,7 +216,7 @@ services:
             VIRTUAL_HOST: ${HOST}.${DOMAIN}
             #LETSENCRYPT_HOST: prometheus.example.com
             #LETSENCRYPT_EMAIL: hoge@example.com
-        # import -> 395, 22
+        # import -> 395, 22, 893
 
     manet:
         image: bobey/manet
