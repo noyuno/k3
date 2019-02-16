@@ -16,3 +16,7 @@
 [submodule "postgresd"]
 	path = postgresd
 	url = git@github.com:noyuno/postgresd.git
+[submodule "photod"]
+	path = photod
+	url = git@github.com:noyuno/photod.git
+
