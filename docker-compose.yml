@@ -81,7 +81,7 @@ services:
             POSTGRES_USER: gitbucket
             POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
-            SCHEDULE: '0 51 17 * * *' # 2:51: sec min hour day month week
+            SCHEDULE: '23 48 17 * * 0,3' # 2:48: sec min hour day month week
 
     minio:
         image: minio/minio:latest
@@ -122,7 +122,7 @@ services:
             ACCESS_KEY: ${AWS_ACCESS_KEY}
             SECRET_KEY: ${AWS_SECRET_KEY}
             S3_PATH: s3://${S3_BUCKET}/backup/files/
-            CRON_SCHEDULE: "46 17 * * *" # 2:46
+            CRON_SCHEDULE: "46 17 * * 0,3" # 2:46
         volumes:
             - ./:/data:ro
         #command: no-cron
