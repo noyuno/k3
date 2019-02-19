@@ -246,7 +246,7 @@ services:
         environment:
             GOOGLE_OAUTH_CLIENT: ${GOOGLE_OAUTH_CLIENT}
             GOOGLE_OAUTH_SECRET: ${GOOGLE_OAUTH_SECRET}
-            BASE_URL: "https://photos.noyuno.space"
+            BASE_URL: "https://photos.${DOMAIN}"
             #BASE_URL: "http://localhost:8080"
             DISCORDBOT: "discordbot"
             AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
