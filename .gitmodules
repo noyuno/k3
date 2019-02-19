@@ -20,3 +20,6 @@
 	path = photod
 	url = git@github.com:noyuno/photod.git
 
+[submodule "icon-checker"]
+	path = icon-checker
+	url = git@github.com:noyuno/icon-checker.git
