@@ -145,10 +145,11 @@ services:
             - cadvisor
             - manet
         volumes:
-            - ./data/discordbot:/data/discordbot/out
-            - ./discordbot:/opt
+            - ./data/discordbot:/data/discordbot
+            - ./logs/discordbot:/logs/discordbot
+            - ./discordbot:/opt/discordbot
         environment:
-            DEPLOY: /data/discordbot
+            DEPLOY: /opt/discordbot
             DISCORD_TOKEN: ${DISCORD_TOKEN}
             DISCORD_CHANNEL_NAME: ${DISCORD_CHANNEL_NAME}
             GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
@@ -256,6 +257,7 @@ services:
             S3_PREFIX: mirror/photod
             AWS_REGION: ${AWS_REGION}
         volumes:
-            - ./data/photod:/data/photod/out
-            - ./photod:/opt:ro
+            - ./data/photod:/data/photod
+            - ./logs/photod:/logs/photod
+            - ./photod:/opt/photod:ro
 
