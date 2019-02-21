@@ -10,6 +10,7 @@ services:
             - grafana
             - animed
             - portainer
+            - photod
         ports:
             - 80:80
             - 443:443
@@ -32,8 +33,8 @@ services:
         volumes:
             - ./data/cert:/var/lib/https-portal
             - ./nginx:/var/lib/nginx-conf:ro
-            - ./html:/var/www/vhosts
-            - ./animed/html:/var/www/vhosts/anime.${DOMAIN}
+            - ./html:/var/www/vhosts:ro
+            - ./animed/html:/var/www/vhosts/anime.${DOMAIN}:ro
             - ./data/animed:/var/www/vhosts/anime.${DOMAIN}/data
 
     php7:
@@ -252,8 +253,9 @@ services:
             AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
             AWS_SECRET_KEY: ${AWS_SECRET_KEY}
             S3_BUCKET: ${S3_BUCKET}
+            S3_PREFIX: mirror/photod
             AWS_REGION: ${AWS_REGION}
         volumes:
             - ./data/photod:/data/photod/out
-            - ./photod:/opt
+            - ./photod:/opt:ro
 
