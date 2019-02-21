@@ -5,3 +5,7 @@ git submodule init
 git submodule update
 git submodule foreach git pull origin master
 
+c=docker-compose
+which $c 1>/dev/null 2>&1 || c=dc
+$c pull $*
+

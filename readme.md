@@ -6,11 +6,11 @@
 
 ## Operations
 
-install docker-compose: go `https://github.com/docker/compose/releases/latest`
+install docker-compose: `./bin/install-compose`
 
-update all: `./bin/update` == `git pull origin master && git submodule foreach git pull origin master`
+update all: `./bin/update`
 
-restart all containers: `./bin/restart` == `dc stop && dc up -d --build`
+restart all containers: `./bin/restart`
 
 ## Tools
 
