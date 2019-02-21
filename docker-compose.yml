@@ -225,6 +225,7 @@ services:
         expose:
             - "8891"
         command: startup.sh --engine=phantomjs
+        restart: always
 
     portainer:
         image: portainer/portainer
