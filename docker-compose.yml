@@ -256,6 +256,7 @@ services:
             S3_BUCKET: ${S3_BUCKET}
             S3_PREFIX: mirror/photod
             AWS_REGION: ${AWS_REGION}
+            SCHEDULE: "17:44" # 2:44
         volumes:
             - ./data/photod:/data/photod
             - ./logs/photod:/logs/photod
