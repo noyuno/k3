@@ -2,6 +2,6 @@
 
 c=docker-compose
 which $c 1>/dev/null 2>&1 || c=dc
-$c stop $*
+$c stop -t 4 $*
+$c rm -f
 $c up -d --build $*
-
