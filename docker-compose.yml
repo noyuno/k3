@@ -138,8 +138,6 @@ services:
         restart: always
         expose:
             - "80"
-        #ports:
-        #    - "80:80"
         links:
             - cadvisor
             - manet
