@@ -321,7 +321,6 @@ services:
                 hard: 99999
         #command: "rclone --transfers 1 --buffer-size 1M --use-mmap -v copy drive: s3:${S3_BUCKET}/mirror/drive"
         command: "bash"
-        command: "/opt/rclone/rclone.sh run"
         volumes:
             - ./data/rclone:/root/.config/rclone
             - ./tmp/rclone:/data
