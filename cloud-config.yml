@@ -32,6 +32,8 @@ coreos:
           mask: true
         - name: iptables-restore.service
           enable: true
+        - name: docker.service
+          enable: true
 write_files:
   - path: /etc/ssh/sshd_config
     permissions: 0600
@@ -67,6 +69,12 @@ write_files:
       -A INPUT -p icmp -m icmp --icmp-type 3 -j ACCEPT
       -A INPUT -p icmp -m icmp --icmp-type 11 -j ACCEPT
       COMMIT
+write_files:
+  - path: /etc/profile.env
+    permission: 0644
+    content: |
+        export LANG=C.utf8
+        export PATH=/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 
 users:
     - name: noyuno

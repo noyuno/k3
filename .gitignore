@@ -7,4 +7,5 @@ go/src/*
 !go/src/notifyd
 depends.png
 .cache
+tmp
 

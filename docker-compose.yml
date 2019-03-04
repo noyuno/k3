@@ -261,3 +261,71 @@ services:
             - ./data/photod:/data/photod
             - ./logs/photod:/logs/photod
             - ./photod:/opt/photod:ro
+
+    rclone-drive:
+        image: noyuno/ob_bulkstash
+        links:
+            - discordbot
+        environment:
+            RCLONE_CROND_SCHEDULE: "02 18 * * *" # 03:02
+            RCLONE_CROND_SOURCE_PATH: "drive:"
+            RCLONE_CROND_DESTINATION_PATH: "/data"
+            RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
+            NAME: "rclone-drive"
+        cap_add:
+            - MKNOD
+            - SYS_ADMIN
+        #restart: always
+        security_opt:
+            - apparmor:unconfined
+        tty: true
+        ulimits:
+            nproc: 65535
+            nofile:
+                soft: 49999
+                hard: 99999
+        #command: "rclone --transfers 1 --buffer-size 1M --use-mmap -v copy drive: s3:${S3_BUCKET}/mirror/drive"
+        command: "bash"
+        volumes:
+            - ./data/rclone:/root/.config/rclone
+            - ./tmp/rclone:/data
+            - ./rclone:/opt/rclone
+            - ./logs/rclone:/logs
+            - ./rclone/monit.d:/etc/monit.d
+        # docker run --rm -it -v $(pwd)/data/rclone:/root/.config/rclone openbridge/ob_bulkstash rclone config
+        # n s3 4 1 <enter> <key> <secret> 11 <enter> 11 <enter> <enter> <enter> <enter> n y
+        # n drive 12 <id> <secret> 2 <enter> <enter> n n <paste> n y
+        # q
+
+    rclone-s3:
+        image: noyuno/ob_bulkstash
+        links:
+            - discordbot
+        environment:
+            RCLONE_CROND_SCHEDULE: "02 00 * * *" # 09:02
+            RCLONE_CROND_SOURCE_PATH: "/data"
+            RCLONE_CROND_DESTINATION_PATH: "s3:k2b/mirror/drive"
+            RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
+            NAME: "rclone-s3"
+        cap_add:
+            - MKNOD
+            - SYS_ADMIN
+        #restart: always
+        security_opt:
+            - apparmor:unconfined
+        tty: true
+        ulimits:
+            nproc: 65535
+            nofile:
+                soft: 49999
+                hard: 99999
+        #command: "rclone --transfers 1 --buffer-size 1M --use-mmap -v copy drive: s3:${S3_BUCKET}/mirror/drive"
+        command: "bash"
+        command: "/opt/rclone/rclone.sh run"
+        volumes:
+            - ./data/rclone:/root/.config/rclone
+            - ./tmp/rclone:/data
+            - ./rclone:/opt/rclone
+            - ./logs/rclone:/logs
+            - ./rclone/monit.d:/etc/monit.d
+            

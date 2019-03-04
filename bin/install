@@ -1,8 +1,17 @@
 #!/bin/bash -e
 
+echo "Install cloud-config"
+sudo coreos-cloudinit --from-file=cloud-config.yml
+sudo cp cloud-config.yml /var/lib/coreos-install/user_data
+
+echo "Install docker-compose"
 sudo mkdir -p /opt/bin
 curl -sLf $(curl -sLf https://api.github.com/repos/docker/compose/releases/latest | \
     jq -r '.assets[] | select(.name=="docker-compose-Linux-x86_64").browser_download_url') | \
     sudo tee /opt/bin/dc >/dev/null
 sudo chmod +x /opt/bin/dc
 
+echo "Install dotfiles"
+ln -sfn ~/k2/.bash_profile ~
+
+echo "Finished. Please reboot"

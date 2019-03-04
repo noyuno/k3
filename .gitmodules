@@ -23,3 +23,6 @@
 [submodule "icon-checker"]
 	path = icon-checker
 	url = git@github.com:noyuno/icon-checker.git
+[submodule "rclone"]
+	path = rclone
+	url = git@github.com:noyuno/ob_bulkstash.git
