@@ -25,7 +25,7 @@ coreos:
               [Service]
               Type=oneshot
               RemainAfterExit=yes
-              ExecStart=/usr/bin/timedatectl set-timezone Asia/Tokyo
+              ExecStart=/usr/bin/timedatectl set-timezone UTC
         - name: sshd.service
           enable: true
         - name: sshd.socket

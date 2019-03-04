@@ -125,6 +125,8 @@ services:
             CRON_SCHEDULE: "46 17 * * 0,2,4" # 2:46
         volumes:
             - ./:/data:ro
+            - ./backupd:/opt/backupd:ro
+            - ./logs:/logs/backupd
         #command: no-cron
 
     animed:
@@ -232,7 +234,7 @@ services:
             - "9000"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
-            - ./data/portrainer:/data
+            - ./data/portainer:/data
 
     photod:
         image: noyuno/photod:latest
