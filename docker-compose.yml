@@ -126,7 +126,7 @@ services:
         volumes:
             - ./:/data:ro
             - ./backupd:/opt/backupd:ro
-            - ./logs:/logs/backupd
+            - ./logs/backupd:/logs/backupd
         #command: no-cron
 
     animed:
