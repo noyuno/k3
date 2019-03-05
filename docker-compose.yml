@@ -267,7 +267,8 @@ services:
         links:
             - discordbot
         environment:
-            RCLONE_CROND_SCHEDULE: "02 18 * * *" # 03:02
+            #RCLONE_CROND_SCHEDULE: "02 18 * * *" # 03:02
+            RCLONE_CROND_SCHEDULE: "09 02 * * *" # 03:02
             RCLONE_CROND_SOURCE_PATH: "drive:"
             RCLONE_CROND_DESTINATION_PATH: "/data"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
@@ -285,7 +286,7 @@ services:
                 soft: 49999
                 hard: 99999
         #command: "rclone --transfers 1 --buffer-size 1M --use-mmap -v copy drive: s3:${S3_BUCKET}/mirror/drive"
-        command: "bash"
+        #command: "bash"
         volumes:
             - ./data/rclone:/root/.config/rclone
             - ./tmp/rclone:/data
@@ -320,7 +321,7 @@ services:
                 soft: 49999
                 hard: 99999
         #command: "rclone --transfers 1 --buffer-size 1M --use-mmap -v copy drive: s3:${S3_BUCKET}/mirror/drive"
-        command: "bash"
+        #command: "bash"
         volumes:
             - ./data/rclone:/root/.config/rclone
             - ./tmp/rclone:/data
