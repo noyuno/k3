@@ -6,7 +6,6 @@ services:
             - php7
             - gitbucket
             - minio
-            - wekan
             - grafana
             - animed
             - portainer
