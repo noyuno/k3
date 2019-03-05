@@ -93,26 +93,6 @@ services:
         volumes:
             - ./data/minio:/data
 
-    wekan:
-        image: quay.io/wekan/wekan:latest
-        restart: always
-        links:
-            - wekan-db
-        environment:
-            ROOT_URL: https://board.${DOMAIN}
-            MONGO_URL: mongodb://wekan-db:27017/wekan
-            WITH_API: "true"
-
-    wekan-db:
-        image: mongo:latest
-        restart: always
-        expose:
-            - 27017
-        command: mongod --smallfiles --oplogSize 128
-        volumes:
-            - ./data/wekan/mongodb:/data/db
-            - ./data/wekan/mongodb-dump:/dump
-
     backupd:
         build: backupd
         restart: always
@@ -159,7 +139,7 @@ services:
             XRAIN_LON: ${XRAIN_LON}
             XRAIN_LAT: ${XRAIN_LAT}
             XRAIN_ZOOM: ${XRAIN_ZOOM}
-            CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,wekan,wekan-db,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod'
+            CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive,rclone-s3'
 
     prometheus:
         image: prom/prometheus
