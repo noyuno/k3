@@ -254,6 +254,7 @@ services:
             - MKNOD
             - SYS_ADMIN
         restart: always
+        #command: /opt/rclone/rclone.sh run sync
         security_opt:
             - apparmor:unconfined
         tty: true
@@ -287,6 +288,7 @@ services:
             - MKNOD
             - SYS_ADMIN
         restart: always
+        #command: /opt/rclone/rclone.sh run sync
         security_opt:
             - apparmor:unconfined
         tty: true
