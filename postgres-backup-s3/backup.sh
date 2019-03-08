@@ -67,5 +67,4 @@ cat dump.sql.gz | aws $AWS_ARGS s3 cp - s3://$S3_BUCKET/$S3_PREFIX/${POSTGRES_DA
 
 echo "SQL backup uploaded successfully"
 
-curl -XPOST -d '{"message": "'$CONTAINER_NAME': finished"}' http://discordbot &&:
-
+curl -XPOST -sd '{"message": "'"$CONTAINER_NAME"': finished"}' http://discordbot >/dev/null
