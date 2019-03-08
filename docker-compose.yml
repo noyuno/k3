@@ -249,7 +249,7 @@ services:
             RCLONE_CROND_SOURCE_PATH: "drive:"
             RCLONE_CROND_DESTINATION_PATH: "/data"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
-            NAME: "rclone-drive"
+            CONTAINER_NAME: "rclone-drive"
         cap_add:
             - MKNOD
             - SYS_ADMIN
@@ -282,7 +282,7 @@ services:
             RCLONE_CROND_SOURCE_PATH: "/data"
             RCLONE_CROND_DESTINATION_PATH: "s3:k2b/mirror/drive"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
-            NAME: "rclone-s3"
+            CONTAINER_NAME: "rclone-s3"
         cap_add:
             - MKNOD
             - SYS_ADMIN
