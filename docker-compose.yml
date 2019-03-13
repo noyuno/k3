@@ -134,8 +134,6 @@ services:
             LOCATION: ${LOCATION}
             CADVISOR: 'cadvisor:8080'
             MANET: 'manet:8891'
-            XRAIN_LON: ${XRAIN_LON}
-            XRAIN_LAT: ${XRAIN_LAT}
             XRAIN_ZOOM: ${XRAIN_ZOOM}
             CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive,rclone-s3'
 
