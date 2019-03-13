@@ -1,3 +1,8 @@
 #!/bin/bash -e
 
-ssh k2 cd k2 \&\& ./bin/pull -i \&\& ./bin/restart
+if [ $1 -eq "-i" ]; then
+    image="-i"
+    shift
+fi
+
+ssh k2 cd k2 \&\& ./bin/pull $image $* \&\& ./bin/restart $*
