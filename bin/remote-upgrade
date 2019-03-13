@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-if [ $1 -eq "-i" ]; then
+if [ "$1" = "-i" ]; then
     image="-i"
     shift
 fi
