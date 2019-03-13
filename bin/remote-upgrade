@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-ssh k2 cd k2 \&\& pull -i \&\& restart
+ssh k2 cd k2 \&\& ./bin/pull -i \&\& ./bin/restart

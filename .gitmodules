@@ -1,28 +1,24 @@
 [submodule "notifyd"]
 	path = notifyd
-	url = git@github.com:noyuno/notifyd.git
+	url = https://github.com/noyuno/notifyd.git
 [submodule "animed"]
 	path = animed
-	url = git@github.com:noyuno/animed.git
+	url = https://github.com/noyuno/animed.git
 [submodule "squid"]
 	path = squid
-	url = git@github.com:noyuno/squid.git
+	url = https://github.com/noyuno/squid.git
 [submodule "discordbot"]
 	path = discordbot
-	url = git@github.com:noyuno/discordbot.git
+	url = https://github.com/noyuno/discordbot.git
 [submodule "backupd"]
 	path = backupd
-	url = git@github.com:noyuno/backupd.git
+	url = https://github.com/noyuno/backupd.git
 [submodule "postgresd"]
 	path = postgresd
-	url = git@github.com:noyuno/postgresd.git
+	url = https://github.com/noyuno/postgresd.git
 [submodule "photod"]
 	path = photod
-	url = git@github.com:noyuno/photod.git
-
-[submodule "icon-checker"]
-	path = icon-checker
-	url = git@github.com:noyuno/icon-checker.git
+	url = https://github.com/noyuno/photod.git
 [submodule "rclone"]
 	path = rclone
-	url = git@github.com:noyuno/ob_bulkstash.git
+	url = https://github.com/noyuno/ob_bulkstash.git
