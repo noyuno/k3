@@ -8,7 +8,7 @@ git submodule update
 if [ "$1" = "-i" ]; then
     shift
     # pull images
-    c=docker-compose
-    which $c 1>/dev/null 2>&1 || c=dc
+    c=/opt/bin/docker-compose
+    which $c 1>/dev/null 2>&1 || c=/opt/bin/dc
     $c pull $*
 fi

@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-c=docker-compose
-which $c 1>/dev/null 2>&1 || c=dc
+c=/opt/bin/docker-compose
+which $c 1>/dev/null 2>&1 || c=/opt/bin/dc
 $c stop -t 4 $*
 $c rm -f $*
-$c up -d --remove-orphans --build  $* 
+$c up -d --remove-orphans --build  $*
