@@ -232,15 +232,17 @@ services:
             AWS_REGION: ${AWS_REGION}
             SCHEDULE_TIME: "17:51" # requires zero fill 02:51
             SCHEDULE_WEEKDAY: "0,1,2,3,4,5,6"
-            #ONESHOT: 1
-            LIBRARY: "true"
+            ONESHOT: 0
+            DEBUG: 0
+            ALBUM: 1
+            LIBRARY: 1
         volumes:
             - ./data/photod:/data/photod
             - ./logs/photod:/logs/photod
             - ./photod:/opt/photod:ro
 
     rclone-drive:
-        image: noyuno/ob_bulkstash
+        image: noyuno/rcloned
         links:
             - discordbot
         environment:
@@ -253,6 +255,7 @@ services:
             - MKNOD
             - SYS_ADMIN
         restart: always
+        # oneshot
         #command: /opt/rclone/rclone.sh run sync
         security_opt:
             - apparmor:unconfined
@@ -274,7 +277,7 @@ services:
         # q
 
     rclone-s3:
-        image: noyuno/ob_bulkstash
+        image: noyuno/rcloned
         links:
             - discordbot
         environment:
@@ -287,6 +290,7 @@ services:
             - MKNOD
             - SYS_ADMIN
         restart: always
+        # oneshot
         #command: /opt/rclone/rclone.sh run sync
         security_opt:
             - apparmor:unconfined

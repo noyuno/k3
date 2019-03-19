@@ -19,6 +19,6 @@
 [submodule "photod"]
 	path = photod
 	url = https://github.com/noyuno/photod.git
-[submodule "rclone"]
-	path = rclone
-	url = https://github.com/noyuno/ob_bulkstash.git
+[submodule "rcloned"]
+	path = rcloned
+	url = https://github.com/noyuno/rcloned.git
