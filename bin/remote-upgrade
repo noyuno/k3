@@ -5,4 +5,10 @@ if [ "$1" = "-i" ]; then
     shift
 fi
 
-ssh k2 cd k2 \&\& ./bin/pull $image $* \&\& ./bin/restart $*
+ssh k2.noyuno.jp \
+    cd k2 \&\& \
+    sudo coreos-cloudinit --from-file=cloud-config.yml \&\& \
+    sudo cp cloud-config.yml /var/lib/coreos-install/user_data \&\& \
+    ./bin/pull $image $* \&\& \
+    ./bin/restart $* \&\& \
+    docker system prune -fa --volumes

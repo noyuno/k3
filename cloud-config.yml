@@ -39,7 +39,7 @@ write_files:
     permissions: 0600
     owner: root:root
     content: |
-      Port 4022
+      Port 22
       UsePrivilegeSeparation sandbox
       PermitRootLogin no
       AllowUsers noyuno
@@ -58,7 +58,7 @@ write_files:
       :OUTPUT ACCEPT [0:0]
       -A INPUT -i lo -j ACCEPT
       -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-      -A INPUT -p tcp -m tcp --dport 4022 -j ACCEPT
+      -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
       -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
       -A INPUT -p udp -m udp --dport 80 -j ACCEPT
       -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT

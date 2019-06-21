@@ -136,7 +136,9 @@ services:
             MANET: 'manet:8891'
             XRAIN_ZOOM: ${XRAIN_ZOOM}
             CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive,rclone-s3'
-
+            MORNING: 22:00 # 07:00
+            EVENING: 10:00 # 19:00
+            
     prometheus:
         image: prom/prometheus
         restart: always

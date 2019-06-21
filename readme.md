@@ -6,11 +6,10 @@
 
 ## Operations
 
-install docker-compose: `./bin/install-compose`
-
-update all: `./bin/update`
-
-restart all containers: `./bin/restart`
+- `./bin/install-compose`: install docker-compose
+- `./bin/update`: update all
+- `./bin/restart`: restart all containers
+- `./bin/remote-upgrade`: upgrade remote (`-i` to pull images)
 
 ## Tools
 
