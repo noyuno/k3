@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+if [ "$1" = "-i" ]; then
+    image="-i"
+    shift
+fi
+
+./bin/pull $image $*
+./bin/update-cloud-config
+./bin/restart $*

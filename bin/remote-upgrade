@@ -8,7 +8,5 @@ fi
 ssh k2.noyuno.jp \
     cd k2 \&\& \
     ./bin/pull $image $* \&\& \
-    sudo coreos-cloudinit --from-file=cloud-config.yml \&\& \
-    sudo cp cloud-config.yml /var/lib/coreos-install/user_data \&\& \
-    ./bin/restart $* \&\& \
-    docker system prune -fa --volumes
+    ./bin/update-cloud-config \&\& \
+    ./bin/restart $*
