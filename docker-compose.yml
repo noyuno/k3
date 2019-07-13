@@ -9,6 +9,7 @@ services:
             - grafana
             - animed
             - portainer
+            - owncloud
         ports:
             - 80:80
             - 443:443
@@ -23,7 +24,8 @@ services:
                 anime.${DOMAIN},
                 status.${DOMAIN} -> http://grafana:3000,
                 portainer.${DOMAIN} -> http://portainer:9000,
-                photos.${DOMAIN} -> http://photod:80
+                photos.${DOMAIN} -> http://photod:80,
+                drive.${DOMAIN} -> http://owncloud:8080
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
             FORCE_RENEW: 'false'
             CLIENT_MAX_BODY_SIZE: '15g'
@@ -44,7 +46,7 @@ services:
         image: gitbucket/gitbucket:latest
         restart: always
         volumes:
-            - ./data/gitbucket/data:/gitbucket
+            - ./large/gitbucket/files:/gitbucket
         links:
             - gitbucket-db
         environment:
@@ -59,7 +61,7 @@ services:
             POSTGRES_USER: gitbucket
             POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
         volumes:
-            - ./data/gitbucket/postgres:/var/lib/postgresql/data
+            - ./large/gitbucket/postgres:/var/lib/postgresql/data
 
     gitbucket-db-backup:
         build: postgres-backup-s3
@@ -89,7 +91,57 @@ services:
             MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
         command: server /data
         volumes:
-            - ./data/minio:/data
+            - ./large/minio:/data
+
+    owncloud:
+        image: owncloud/server:latest
+        links:
+            - owncloud-db
+        volumes:
+            - ./large/owncloud/files:/mnt/data
+        environment:
+            OWNCLOUD_DOMAIN: drive.${DOMAIN}
+            OWNCLOUD_DB_TYPE: pgsql
+            OWNCLOUD_DB_HOST: owncloud-db
+            OWNCLOUD_DB_NAME: owncloud
+            OWNCLOUD_DB_USERNAME: owncloud
+            OWNCLOUD_DB_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
+            OWNCLOUD_ADMIN_USERNAME: ${OWNCLOUD_ADMIN_USER}
+            OWNCLOUD_ADMIN_PASSWORD: ${OWNCLOUD_ADMIN_PASSWORD}
+        healthcheck:
+            test: ["CMD", "/usr/bin/healthcheck"]
+            interval: 30s
+            timeout: 10ss
+            retries: 5
+
+    owncloud-db:
+        image: postgres:10.5-alpine
+        restart: always
+        environment:
+            POSTGRES_USER: owncloud
+            POSTGRES_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
+        volumes:
+            - ./large/owncloud/postgres:/var/lib/postgresql/data
+
+    owncloud-db-backup:
+        build: postgres-backup-s3
+        restart: always
+        links:
+            - gitbucket-db
+            - discordbot
+        environment:
+            CONTAINER_NAME: owncloud-db-backup
+            S3_REGION: ap-northeast-1
+            S3_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
+            S3_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
+            S3_BUCKET: ${S3_BUCKET}
+            S3_PREFIX: large/db/owncloud
+            POSTGRES_HOST: owncloud-db
+            POSTGRES_DATABASE: owncloud
+            POSTGRES_USER: owncloud
+            POSTGRES_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
+            POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
+            SCHEDULE: '23 16 18 * * 0,2,4' # 3:16: sec min hour day month week
 
     backupd:
         build: backupd
@@ -97,15 +149,49 @@ services:
         links:
             - discordbot
         environment:
+            NAME: backupd
             ACCESS_KEY: ${AWS_ACCESS_KEY}
             SECRET_KEY: ${AWS_SECRET_KEY}
             S3_PATH: s3://${S3_BUCKET}/backup/files/
             CRON_SCHEDULE: "46 17 * * 0,2,4" # 2:46
+            EXCLUDES: "large,tmp"
         volumes:
             - ./:/data:ro
             - ./backupd:/opt/backupd:ro
             - ./logs/backupd:/logs/backupd
         #command: no-cron
+
+    largemirrord:
+        image: noyuno/rcloned
+        links:
+            - discordbot
+        environment:
+            RCLONE_CROND_SCHEDULE: "06 18 * * 0,2,4" # 03:06
+            RCLONE_CROND_SOURCE_PATH: "/data"
+            RCLONE_CROND_DESTINATION_PATH: "s3:k2b/large/files"
+            RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
+            CONTAINER_NAME: "largemirrord"
+        cap_add:
+            - MKNOD
+            - SYS_ADMIN
+        restart: always
+        # oneshot
+        #command: /opt/rclone/rclone.sh run sync
+        security_opt:
+            - apparmor:unconfined
+        tty: true
+        ulimits:
+            nproc: 65535
+            nofile:
+                soft: 49999
+                hard: 99999
+        volumes:
+            - ./data/rclone:/root/.config/rclone:ro
+            - ./large:/data/large:ro
+            - ./rclone:/opt/rclone:ro
+            - ./logs/largemirrord:/logs
+            - ./rclone/monit.d:/etc/monit.d:ro
+            
 
     animed:
         build: animed
@@ -230,7 +316,7 @@ services:
             AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
             AWS_SECRET_KEY: ${AWS_SECRET_KEY}
             S3_BUCKET: ${S3_BUCKET}
-            S3_PREFIX: mirror/photod
+            S3_PREFIX: google/photos
             AWS_REGION: ${AWS_REGION}
             SCHEDULE_TIME: "17:51" # requires zero fill 02:51
             SCHEDULE_WEEKDAY: "0,1,2,3,4,5,6"
@@ -285,7 +371,7 @@ services:
         environment:
             RCLONE_CROND_SCHEDULE: "02 00 * * *" # 09:02
             RCLONE_CROND_SOURCE_PATH: "/data"
-            RCLONE_CROND_DESTINATION_PATH: "s3:k2b/mirror/drive"
+            RCLONE_CROND_DESTINATION_PATH: "s3:k2b/google/drive"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
             CONTAINER_NAME: "rclone-s3"
         cap_add:
@@ -303,9 +389,9 @@ services:
                 soft: 49999
                 hard: 99999
         volumes:
-            - ./data/rclone:/root/.config/rclone
-            - ./tmp/rclone:/data
-            - ./rclone:/opt/rclone
+            - ./data/rclone:/root/.config/rclone:ro
+            - ./tmp/rclone:/data:ro
+            - ./rclone:/opt/rclone:ro
             - ./logs/rclone:/logs
-            - ./rclone/monit.d:/etc/monit.d
+            - ./rclone/monit.d:/etc/monit.d:ro
             
