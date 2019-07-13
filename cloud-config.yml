@@ -5,6 +5,7 @@ hostname: k2
 coreos:
     update:
         reboot-strategy: "reboot"
+    locksmith:
         window_start: Thu 02:10
         window_length: 10m
     units:
@@ -71,7 +72,7 @@ write_files:
       COMMIT
 write_files:
   - path: /etc/profile.env
-    permission: 0644
+    permissions: 0644
     content: |
         export LANG=C.utf8
         export PATH=/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin

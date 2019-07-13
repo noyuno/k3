@@ -4,12 +4,39 @@
 
 ![k2](https://raw.githubusercontent.com/noyuno/k2/master/k2.png)
 
+## Install
+
+1. Get [CoreOS ISO](https://coreos.com/os/docs/latest/booting-with-iso.html)
+2. Create instance. Note IP address, gateway
+3. Boot instance
+4. `ip a`. Note interface name
+5. `sudo vi /etc/systemd/network/static.network`
+
+~~~
+[Match]
+Name=eth0
+[Network]
+Address=xxx.xxx.xxx.xxx
+Gateway=xxx.xxx.xxx.xxx
+DNS=8.8.8.8
+~~~
+
+6. `sudo systemctl restart systemd-networkd`
+7. `wget "https://raw.githubusercontent.com/noyuno/k2/master/cloud-config.yml"`
+8. `sudo gdisk /dev/vda`, `p`
+8. `sudo coreos-install -d /dev/vda -C stable -c cloud-config.yml`
+
+
 ## Operations
 
 - `./bin/install-compose`: install docker-compose
 - `./bin/update`: update all
 - `./bin/restart`: restart all containers
 - `./bin/remote-upgrade`: upgrade remote (`-i` to pull images)
+
+## Attention
+
+- When change sub domain, must remove `nginx` container
 
 ## Tools
 
@@ -42,29 +69,27 @@ In Arch Linux client,
 ~~~sh
 AWS_ACCESS_KEY=
 AWS_SECRET_KEY=
+EMAIL=
 mkdir -p out/{drive,photos}
 sudo mv /usr/lib/python3.7/site-packages/dateutil /usr/lib/python3.7/site-packages/dateutil.old
 yay -Syu s3cmd
 ~~~
 
-3. Restore items from Glacier
+3. Restore items from Glacier.
 
 ~~~sh
 s3cmd --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY -r --region=ap-northeast-1 -D 3 --restore-priority=standard restore s3://k2b/google
 ~~~
 
-4. Wait 3-5 hours, type below commands to check status
+4. Wait 5 hours.
+
+5. Download Google Drive files
 
 ~~~sh
-s3cmd --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY -r --region=ap-northeast-1 ls s3://k2b/google | awk '{for(i=4;i<NF;++i){printf("%s ",$i)}print $NF}' > out/ls
-while read i; do s3cmd --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY --region=ap-northeast-1 info "$i" | grep "Storage:.*GLACIER" >/dev/null ; if [ $? -eq 0 ]; then echo "Glacier object: $i"; else echo -n . ; fi ; done < out/ls
+s3cmd --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY -r --region=ap-northeast-1 sync s3://k2b/google/drive out/drive
 ~~~
 
-5. Download items
-
-~~~sh
-s3cmd --access_key=$AWS_ACCESS_KEY --secret_key=$AWS_SECRET_KEY -r --region=ap-northeast-1 get s3://k2b/google/drive out/drive
-~~~
+6. Download Google Photos files
 
 ~~~sh
 docker run --rm -it \
