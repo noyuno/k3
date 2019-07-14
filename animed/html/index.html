@@ -1,0 +1,61 @@
+<!doctype html>
+<head>
+    <title>anime</title>
+    <meta charset = "UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inconsolata" />
+    <link rel = "stylesheet" type = "text/css" href = "./black.css">
+    <style>
+        * {
+            font-size:17px;
+        }
+        table {
+            white-jp: nowrap;
+            table-layout: auto 
+        }
+
+        td {
+            padding-right: 0.5em 
+        }
+        hr:after {
+            top: -10px;
+        }
+        .section {
+            margin: 1em 0em 1em 0em;
+            width: auto;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="./index.js"></script>
+</head>
+<body>
+    <div class="wrapper"><canvas id="canvas"></canvas></div>
+        <div id="content">
+            <b><a href="/">anime</a>.<a href="//noyuno.jp" id="root">noyuno.jp</a></b> 
+            <input type="text" id="search" placeholder="フィルタ" onkeyup="search();
+"></input>
+            <div id="next"></div>
+            <br>
+        <hr>
+        <div class="section" id="anime"></div>
+        <div class="section" id="search-not-found" style="display: none">∅</div>
+        <div class="footer" role="contentinfo">
+            <a href="/data/anime.ical">iCalendar</a>
+            <a href="https://noyuno.github.io/blog/2016/12/09/anime">詳細</a>
+            Powered by <a href="http://cal.syoboi.jp">しょぼいカレンダー</a>
+        </div>
+    </div>
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-88784647-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-88784647-2');
+</script>
+
+</body>
+

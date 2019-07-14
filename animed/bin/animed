@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+
+from datetime import *
+from icalendar import Calendar, Event
+import argparse
+import json
+import os
+import subprocess
+import sys
+import time
+import unicodedata
+import urllib.parse
+import urllib.request
+import logging
+import traceback
+import pprint
+
+quoted_delimiter = "%01"
+delimiter = urllib.parse.unquote(quoted_delimiter)
+# sleep 12 hours
+sleep_time = 60 * 60 * 12
+user = "shiro51"
+base = os.environ.get("ANIMED_OUTPUT", "/data")
+log = base + "/animed.log"
+name = "animed"
+keywordfilename = "https://raw.githubusercontent.com/noyuno/dotfiles/master/list/anime-keyword"
+keywordcachefilename = base + "/anime-keyword"
+animeallfilename = base + "/animeall.ical"
+animefilename = base + "/anime.ical"
+animealljsonfilename = base + "/animeall.json"
+animejsonfilename = base + "/anime.json"
+
+def setup_custom_logger(name, filename):
+    formatter = logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s',
+                                  datefmt='%Y-%m-%d %H:%M:%S')
+    handler = logging.FileHandler(filename, mode='a')
+    handler.setFormatter(formatter)
+    screen_handler = logging.StreamHandler(stream=sys.stdout)
+    screen_handler.setFormatter(formatter)
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(handler)
+    logger.addHandler(screen_handler)
+    return logger
+
+logger = setup_custom_logger(name, log)
+logger.info(name + ": Anime viewing support service")
+
+def getdata(ftype):
+    url = "http://cal.syoboi.jp/rss2.php?usr=" + user + "&" + \
+        "filter=0&count=1000&days=14&" + \
+        "titlefmt=%24(StTime)" + quoted_delimiter + \
+        "%24(Mark)%24(MarkW)" + quoted_delimiter + \
+        "%24(ShortTitle)" + quoted_delimiter + \
+        "%24(Count)" + quoted_delimiter + \
+        "%24(SubTitleA)" + quoted_delimiter + \
+        "%24(ChName)&alt=" + ftype
+    return urllib.request.urlopen(url)
+
+keywords = []
+def getkeywords():
+    keywordfile = None
+    cache = None
+    try:
+        keywordfile = urllib.request.urlopen(keywordfilename).read().decode("utf-8")
+        cache = open(keywordcachefilename, "w")
+        cache.write(keywordfile)
+        k = keywordfile.split("\n")
+        for row in k:
+            if row != "":
+                keywords.append(row)
+    finally:
+        if cache is not None:
+            cache.close()
+
+def containskeyword(evname):
+    if evname is not None:
+        for keyword in keywords:
+            if evname.find(keyword) != -1:
+                return True
+    return False
+
+def extractical():
+    text = getdata("ical").read().decode("utf-8")
+    f = open(animeallfilename, 'w')
+    f.write(text)
+    f.close()
+    logger.debug("wrote: " + animeallfilename)
+    c = Calendar.from_ical(text)
+    outcal = Calendar()
+    outcal["name"] = "Anime calendar"
+
+    for ev in c.walk():
+        if ev.name != "VEVENT":
+            continue
+
+        t = ev.get("summary").split(delimiter)
+        evbegin = t[0]
+        evalert = t[1]
+        evtitle = t[2]
+        #evsubtitle = t[3].rjust(2, " ") + " " + t[4]
+        evnum = "#" + t[3]
+        evsubtitle = t[4]
+        evch = t[5]
+
+        # anime.ical
+        contains = containskeyword(evtitle) or containskeyword(evsubtitle)
+        if contains:
+            ev["summary"] = evalert + evtitle + " " + evnum + " " + evsubtitle
+            outcal.add_component(ev)
+
+    f = None
+    try:
+        f = open(animefilename, "wb")
+        f.write(outcal.to_ical())
+    finally:
+        if f is not None:
+            f.close()
+    logger.debug("saved: " + animefilename)
+
+def extractjson():
+    data = getdata("json")
+    text = data.read().decode("utf-8")
+    alldata = json.loads(text)
+    f = open(animealljsonfilename, 'w')
+    text = json.dumps(alldata, sort_keys=False, indent=4, ensure_ascii=False)
+    f.write(text)
+    f.close()
+    logger.debug("wrote: " + animealljsonfilename)
+    outdata = { "items": [] }
+
+    for p in alldata["items"]:
+        contains = containskeyword(p["Title"]) or containskeyword(p["SubTitle"])
+        if contains:
+            outdata["items"].append(p)
+    outdata["items"] = sorted(outdata["items"], key=lambda p: p["StTime"])
+    out = json.dumps(outdata, sort_keys=False, indent=4, ensure_ascii=False)
+    outf = open(animejsonfilename, "w")
+    outf.write(out)
+    outf.write("\n")
+    outf.close()
+    logger.debug("wrote: " + animejsonfilename)
+
+def main():
+    getkeywords()
+    extractical()
+    extractjson()
+    logger.info("finished update")
+
+if __name__ == '__main__':
+    if len(sys.argv) == 2 and sys.argv[1] == "--debug":
+        main()
+    else:
+        while True:
+            try:
+                main()
+                time.sleep(sleep_time)
+            except KeyboardInterrupt:
+                raise
+            except Exception as e:
+                logging.error(traceback.format_exc())
+                time.sleep(sleep_time)
+

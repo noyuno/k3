@@ -1,0 +1,108 @@
+@charset "utf-8";
+
+* {
+    font-family:"Inconsolata", "Noto Sans CJK JP DemiLight", "Noto Sans CJK JP Regular", monospace;
+    font-size:20px;
+    color: lightgray;
+    line-height: 1.3em;
+    box-sizing:border-box:
+}
+
+body, input {
+    background-color: #222
+}
+
+a {
+    text-decoration: none 
+}
+
+a:link, a:visited {
+    color:lightgray 
+}
+
+a:active, a:hover, a:focus {
+    color: white 
+}
+
+h1 {
+    font-weight: bold 
+}
+
+hr {
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-top: 1px dashed #bbb;
+
+}
+
+hr:after {
+    content: '✂';
+    display: inline-block;
+    position: relative;
+    top: -12px;
+    left: 40px;
+    padding: 0 3px;
+    font-size: 18px;
+}
+
+.wrapper {
+    position: fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+
+}
+
+#canvas {
+    width: 2000px;
+    height: 2000px 
+}
+
+#content {
+    position: absolute;
+    margin: 30px;
+    top: 0;
+    left: 0
+}
+
+.section {
+    margin: 1em 0em 1em 0em;
+    width: 250px;
+}
+
+.hidden {
+    display: none;
+}
+
+.table-parent {
+  display : table; 
+  table-layout : fixed;
+  width : 100%;
+    margin: 0.5em;
+}
+
+table {
+    display: table-cell;
+    table-layout:fixed;
+    border-collapse: collapse;
+    word-break : break-all;
+    word-wrap:break-all;
+    overflow-wrap:break-all;
+}
+td, th {
+    border: 1px gray solid;
+    padding: 1px;
+}
+
+td {
+    padding-right: 0.5em 
+}
+
+ul, ol {
+    margin-top:0px;
+    margin-bottom:0px;
+}
+
