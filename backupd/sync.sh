@@ -11,6 +11,7 @@ message () {
 d=$(date +'%Y%m%d-%H%M')
 echo "Job started: $d"
 OLDIFS=$IFS
+IFS=,
 for e in "${EXCLUDES}" ; do
     echo "$e" >> /tmp/excludes     
 done
