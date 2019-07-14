@@ -10,14 +10,8 @@ message () {
 
 d=$(date +'%Y%m%d-%H%M')
 echo "Job started: $d"
-OLDIFS=$IFS
-IFS=,
-for e in "${EXCLUDES}" ; do
-    echo "$e" >> /tmp/excludes     
-done
-IFS=$OLDIFS
 echo "Excludes list:"
-cat /tmp/excludes
+echo "$EXCLUDES" | tr "," "\n" | tee /tmp/excludes
 
 pushd $(dirname $DATA_PATH) >/dev/null
 f=$d.tar.gz
