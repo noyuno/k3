@@ -72,10 +72,10 @@ services:
         environment:
             CONTAINER_NAME: gitbucket-db-backup
             S3_REGION: ap-northeast-1
-            S3_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
-            S3_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
+            S3_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            S3_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             S3_BUCKET: ${S3_BUCKET}
-            S3_PREFIX: backup/db/gitbucket
+            S3_PREFIX: large/db/gitbucket
             POSTGRES_HOST: gitbucket-db
             POSTGRES_DATABASE: gitbucket
             POSTGRES_USER: gitbucket
@@ -133,8 +133,8 @@ services:
         environment:
             CONTAINER_NAME: owncloud-db-backup
             S3_REGION: ap-northeast-1
-            S3_ACCESS_KEY_ID: ${AWS_ACCESS_KEY}
-            S3_SECRET_ACCESS_KEY: ${AWS_SECRET_KEY}
+            S3_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            S3_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             S3_BUCKET: ${S3_BUCKET}
             S3_PREFIX: large/db/owncloud
             POSTGRES_HOST: owncloud-db
@@ -151,8 +151,9 @@ services:
             - discordbot
         environment:
             NAME: backupd
-            ACCESS_KEY: ${AWS_ACCESS_KEY}
-            SECRET_KEY: ${AWS_SECRET_KEY}
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+            AWS_REGION: ap-northeast-1
             S3_PATH: s3://${S3_BUCKET}/backup/files/
             CRON_SCHEDULE: "46 17 * * 0,2,4" # 2:46
             EXCLUDES: "large,tmp"
@@ -314,13 +315,13 @@ services:
             GOOGLE_OAUTH_SECRET: ${GOOGLE_OAUTH_SECRET}
             BASE_URL: "https://photos.${DOMAIN}"
             DISCORDBOT: "discordbot"
-            AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-            AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             S3_BUCKET: ${S3_BUCKET}
             S3_PREFIX: google/photos
             AWS_REGION: ${AWS_REGION}
             SCHEDULE_TIME: "17:51" # requires zero fill 02:51
-            SCHEDULE_WEEKDAY: "0,1,2,3,4,5,6"
+            SCHEDULE_WEEKDAY: "0,2,4"
             ONESHOT: 0
             DEBUG: 0
             ALBUM: 1
@@ -330,12 +331,12 @@ services:
             - ./logs/photod:/logs/photod
             - ./photod:/opt/photod:ro
 
-    rclone-drive:
+    rclone-drive-local:
         image: noyuno/rcloned
         links:
             - discordbot
         environment:
-            RCLONE_CROND_SCHEDULE: "02 18 * * *" # 03:02
+            RCLONE_CROND_SCHEDULE: "02 18 * * 0,2,4" # 03:02
             RCLONE_CROND_SOURCE_PATH: "drive:"
             RCLONE_CROND_DESTINATION_PATH: "/data"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
@@ -365,12 +366,12 @@ services:
         # n drive 12 <id> <secret> 2 <enter> <enter> n n <paste> n y
         # q
 
-    rclone-s3:
+    rclone-drive-s3:
         image: noyuno/rcloned
         links:
             - discordbot
         environment:
-            RCLONE_CROND_SCHEDULE: "02 00 * * *" # 09:02
+            RCLONE_CROND_SCHEDULE: "02 00 * * 0,2,4" # 09:02
             RCLONE_CROND_SOURCE_PATH: "/data"
             RCLONE_CROND_DESTINATION_PATH: "s3:k2b/google/drive"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"

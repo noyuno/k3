@@ -79,7 +79,7 @@ write_files:
 
 users:
     - name: noyuno
-      passwd: "$1$zq7/e6OC$Cwz3pmU3y36ew.HjEOrOA1"
+      passwd: "$1$2.Ma1qhX$9Eze0hhKnwg966xinkjDx1"
       groups:
           - sudo
           - wheel
