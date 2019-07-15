@@ -9,6 +9,8 @@ sudo chmod +x /opt/bin/dc
 
 echo "Install dotfiles"
 ln -sfn ~/k2/.bash_profile ~
+ln -sfn ~/k2/.bashrc ~
+ln -sfn ~/k2/.bash_aliases ~
 ln -sfn ~/k2/.vimrc ~
 
 echo "Finished."

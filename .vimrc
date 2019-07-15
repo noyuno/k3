@@ -7,8 +7,6 @@ set virtualedit=onemore
 set smartindent
 set showmatch
 set wildmode=list:longest
-syntax enable
-set list listchars=tab:\▸
 set expandtab
 set tabstop=4
 set shiftwidth=4

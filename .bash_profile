@@ -54,20 +54,22 @@ fi
 
 insert LD_LIBRARY_PATH "$HOME/local/lib64"
 
-#git
-if [[ "`git --version`" =~ ^git\ version\ 2.*$ ]]; then
-    ln -sf "$HOME/dotfiles/.gitconfig" "$HOME/.gitconfig"
-else
-    cat "$HOME/dotfiles/.gitconfig" | \
-        grep -v 'default\s=\ssimple' > \
-        "$HOME/.gitconfig.legacy"
-    ln -sf "$HOME/.gitconfig.legacy" "$HOME/.gitconfig"
-fi
-# for server
-if [ "$SSH_CONNECTION" ]; then
-    cp $HOME/dotfiles/.gitconfig $HOME/.gitconfig.server
-    ln -sf $HOME/.gitconfig.server $HOME/.gitconfig
-    git config --global credential.helper "cache --timeout 1209600" # 2 weeks
+if [ -d "$HOME/dotfiles" ]; then
+    #git
+    if [[ "`git --version`" =~ ^git\ version\ 2.*$ ]]; then
+        ln -sf "$HOME/dotfiles/.gitconfig" "$HOME/.gitconfig"
+    else
+        cat "$HOME/dotfiles/.gitconfig" | \
+            grep -v 'default\s=\ssimple' > \
+            "$HOME/.gitconfig.legacy"
+        ln -sf "$HOME/.gitconfig.legacy" "$HOME/.gitconfig"
+    fi
+    # for server
+    if [ "$SSH_CONNECTION" ]; then
+        cp $HOME/dotfiles/.gitconfig $HOME/.gitconfig.server
+        ln -sf $HOME/.gitconfig.server $HOME/.gitconfig
+        git config --global credential.helper "cache --timeout 1209600" # 2 weeks
+    fi
 fi
 
 # fcitx on X11 Forwarding
