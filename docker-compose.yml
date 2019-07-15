@@ -332,7 +332,7 @@ services:
                 hard: 99999
         volumes:
             - ./data/rclone:/root/.config/rclone
-            - ./tmp/rclone:/data
+            - ./tmp/google-drive:/data
             - ./rclone:/opt/rclone
             - ./logs/rclone:/logs
             - ./rclone/monit.d:/etc/monit.d
@@ -367,7 +367,7 @@ services:
                 hard: 99999
         volumes:
             - ./data/rclone:/root/.config/rclone:ro
-            - ./tmp/rclone:/data:ro
+            - ./tmp/google-drive:/data:ro
             - ./rclone:/opt/rclone:ro
             - ./logs/rclone:/logs
             - ./rclone/monit.d:/etc/monit.d:ro

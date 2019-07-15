@@ -38,8 +38,23 @@ If forget changing IP address, edit `/var/lib/coreos-install/user_data`
 
 In Linux client,
 
-12. `ssh xxx.xxx.xxx.xxx`
-13. `git clone --recursive https://github.com/noyuno/k2`
+12. `ssh xxx.xxx.xxx.xxx` (If refused connection, type `sudo systemctl start sshd` in VNC)
+13. Set up `docker-compose`
+
+~~~sh
+git clone https://github.com/noyuno/k2
+cd k2
+# install docker-compose
+./bin/install
+cp .env.example .env
+vi .env
+~~~
+
+14. Run services
+
+~~~sh
+dc up -d
+~~~
 
 ## Operations
 
