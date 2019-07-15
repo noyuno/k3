@@ -60,9 +60,9 @@ draw dependency of docker container: `docker run --rm -it --name dcv -v $(pwd):/
 
 | instance name       | target       | software           | generation | span   | time  | expires | path                   |
 |---------------------|--------------|--------------------|------------|--------|-------|---------|------------------------|
-| gitbucket-db-backup | gitbucket-db | postgres-backup-s3 | 26         | 3/week | 02:48 | 2 month | k2b/large/db/gitbucket |
-| owncloud-db-backup  | gitbucket-db | postgres-backup-s3 | 26         | 3/week | 03:16 | 2 month | k2b/large/db/owncloud  |
-| backupd             | animed       | backupd            | 26         | 3/week | 02:46 | 2 month | k2b/backup/files       |
+| gitbucket-db-backup | gitbucket-db | postgres-backup-s3 | 38         | 3/week | 02:48 | 2 month | k2b/large/db/gitbucket |
+| owncloud-db-backup  | gitbucket-db | postgres-backup-s3 | 38         | 3/week | 03:16 | 2 month | k2b/large/db/owncloud  |
+| backupd             | animed       | backupd            | 38         | 3/week | 02:46 | 2 month | k2b/backup/files       |
 | largemirrord        | gitbucket,owncloud,minio | rcloned | 1         | 3/week | 03:06 | -       | k2b/large/files        |
 | photod              | Google Photos | photod            | 1          | 3/week | 02:51 | -       | k2b/google/photos      |
 | rclone-drive-local  | Google Drive | rcloned            | 1          | 3/week | 03:02 | -       | ./tmp/rclone           |
@@ -98,10 +98,6 @@ aws configure
 
 1. Set up
 
-~~~sh
-mkdir -p out/k2/{backup,large,db}
-~~~
-
 2. Restore items from Glacier.
 
 ~~~sh
@@ -115,19 +111,31 @@ aws s3api restore-object --restore-request Days=5 --bucket k2b --key large/db/ow
 
 3. Wait 5 hours.
 
+In instance(ssh),
+
 4. Download items. If error occured, check state and try again.
 
 ~~~sh
+mkdir -p s3/{large,db}
+# install awscli
+toolbox
+toolbox > yum install -y awscli
+
 # check state
-aws s3api head-object --bucket k2b --key (key)
+toolbox aws configure # input AWS Access Key ID, Access Key Secret, Region(ap-northeast-1)
+toolbox aws s3api head-object --bucket k2b --key (key)
 
 # download
-aws s3 cp --force-glacier-transfer s3://k2b/backup/files/20190711-1746.tar.gz out/k2/backup/20190711-1746.tar.gz
-aws s3 sync --force-glacier-transfer s3://k2b/large/files out/k2/backup/large
-aws s3 cp --force-glacier-transfer s3://k2b/large/db/gitbucket/gitbucket-20190711-1748.tar.gz out/k2/db
+toolbox aws s3 cp --force-glacier-transfer s3://k2b/backup/files/20190711-1746.tar.gz /media/root/home/noyuno/s3/k2.tar.gz
+toolbox aws s3 sync --force-glacier-transfer s3://k2b/large/files /media/root/home/noyuno/s3/backup/large
+toolbox aws s3 cp --force-glacier-transfer s3://k2b/large/db/gitbucket/gitbucket-20190711-1748.sql.gz /media/root/home/noyuno/s3/db
+
+# extract
+cd s3
+tar -xf k2.tar.gz
+
+gunzip -c out/k2/db/gitbucket-20190711-1748.sql.gz > out/k2/db/gitbucket-20190711-1748.sql
 ~~~
-
-
 
 ### Google data
 

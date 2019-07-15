@@ -46,7 +46,7 @@ services:
         image: gitbucket/gitbucket:latest
         restart: always
         volumes:
-            - ./large/gitbucket/files:/gitbucket
+            - ./data/gitbucket/files:/gitbucket
         links:
             - gitbucket-db
         environment:
@@ -61,7 +61,7 @@ services:
             POSTGRES_USER: gitbucket
             POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
         volumes:
-            - ./large/gitbucket/postgres:/var/lib/postgresql/data
+            - ./data/gitbucket/postgres:/var/lib/postgresql/data
 
     gitbucket-db-backup:
         build: postgres-backup-s3
@@ -75,13 +75,14 @@ services:
             S3_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
             S3_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             S3_BUCKET: ${S3_BUCKET}
-            S3_PREFIX: large/db/gitbucket
+            S3_PREFIX: backup
             POSTGRES_HOST: gitbucket-db
             POSTGRES_DATABASE: gitbucket
             POSTGRES_USER: gitbucket
             POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
             SCHEDULE: '23 48 17 * * 0,2,4' # 2:48: sec min hour day month week
+            #DATETIME: true
 
     minio:
         image: minio/minio:latest
@@ -91,7 +92,7 @@ services:
             MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
         command: server /data
         volumes:
-            - ./large/minio:/data
+            - ./data/minio:/data
 
     owncloud:
         image: owncloud/server:latest
@@ -99,7 +100,7 @@ services:
         links:
             - owncloud-db
         volumes:
-            - ./large/owncloud/files:/mnt/data
+            - ./data/owncloud/files:/mnt/data
         environment:
             OWNCLOUD_DOMAIN: drive.${DOMAIN}
             OWNCLOUD_DB_TYPE: pgsql
@@ -124,13 +125,13 @@ services:
             POSTGRES_USER: owncloud
             POSTGRES_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
         volumes:
-            - ./large/owncloud/postgres:/var/lib/postgresql/data
+            - ./data/owncloud/postgres:/var/lib/postgresql/data
 
     owncloud-db-backup:
         build: postgres-backup-s3
         restart: always
         links:
-            - gitbucket-db
+            - owncloud-db
             - discordbot
         environment:
             CONTAINER_NAME: owncloud-db-backup
@@ -138,13 +139,14 @@ services:
             S3_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
             S3_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             S3_BUCKET: ${S3_BUCKET}
-            S3_PREFIX: large/db/owncloud
+            S3_PREFIX: backup
             POSTGRES_HOST: owncloud-db
             POSTGRES_DATABASE: owncloud
             POSTGRES_USER: owncloud
             POSTGRES_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
             SCHEDULE: '23 16 18 * * 0,2,4' # 3:16: sec min hour day month week
+            #DATETIME: true
 
     backupd:
         build: backupd
@@ -156,46 +158,16 @@ services:
             AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
             AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             AWS_REGION: ap-northeast-1
-            S3_PATH: s3://${S3_BUCKET}/backup/files/
+            S3_PATH: s3://${S3_BUCKET}/backup/
             CRON_SCHEDULE: "46 17 * * 0,2,4" # 2:46
-            EXCLUDES: "large,tmp"
+            EXCLUDES: "tmp"
+            COMPRESS: true
+            #DATETIME: true
         volumes:
             - ./:/data:ro
             - ./backupd:/opt/backupd:ro
             - ./logs/backupd:/logs/backupd
         #command: no-cron
-
-    largemirrord:
-        image: noyuno/rcloned
-        links:
-            - discordbot
-        environment:
-            RCLONE_CROND_SCHEDULE: "06 18 * * 0,2,4" # 03:06
-            RCLONE_CROND_SOURCE_PATH: "/data"
-            RCLONE_CROND_DESTINATION_PATH: "s3:k2b/large/files"
-            RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
-            CONTAINER_NAME: "largemirrord"
-        cap_add:
-            - MKNOD
-            - SYS_ADMIN
-        restart: always
-        # oneshot
-        #command: /opt/rclone/rclone.sh run sync
-        security_opt:
-            - apparmor:unconfined
-        tty: true
-        ulimits:
-            nproc: 65535
-            nofile:
-                soft: 49999
-                hard: 99999
-        volumes:
-            - ./data/rclone:/root/.config/rclone:ro
-            - ./large:/data/large:ro
-            - ./rclone:/opt/rclone:ro
-            - ./logs/largemirrord:/logs
-            - ./rclone/monit.d:/etc/monit.d:ro
-            
 
     animed:
         build: animed

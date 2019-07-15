@@ -36,7 +36,10 @@ else
     CRON_ENV="PARAMS='$PARAMS'"
     CRON_ENV="$CRON_ENV\nDATA_PATH='$DATA_PATH'"
     CRON_ENV="$CRON_ENV\nS3_PATH='$S3_PATH'"
-    echo -e "$CRON_ENV\n$CRON_SCHEDULE $BASEDIR/sync.sh > $LOGFIFO 2>&1" | crontab -
+    echo "$CRON_SCHEDULES" | tr ";" "\n" | while read line ; do
+        echo -e "$CRON_ENV\n$line $BASEDIR/sync.sh > $LOGFIFO 2>&1" >>/tmp/cron   
+    done
+    crontab /tmp/cron
     crontab -l
     crond
     tail -f "$LOGFIFO" | tee $LOGDIR/$(date +'%Y%m%d-%H%M')
