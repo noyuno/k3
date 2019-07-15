@@ -82,7 +82,7 @@ services:
             POSTGRES_USER: gitbucket
             POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
-            SCHEDULE: '23 48 17 * * 0,2,4' # 2:48: sec min hour day month week
+            SCHEDULE: '23 48 17 * * 0,3' # 2:48: sec min hour day month week
             #DATETIME: "true"
 
     minio:
@@ -146,7 +146,7 @@ services:
             POSTGRES_USER: owncloud
             POSTGRES_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
-            SCHEDULE: '23 16 18 * * 0,2,4' # 3:16: sec min hour day month week
+            SCHEDULE: '23 16 18 * * 0,3' # 3:16: sec min hour day month week
             #DATETIME: "true"
 
     backupd:
@@ -160,7 +160,7 @@ services:
             AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             AWS_REGION: ap-northeast-1
             S3_PATH: s3://${S3_BUCKET}/backup/
-            CRON_SCHEDULE: "46 17 * * 0,2,4" # 2:46
+            CRON_SCHEDULE: "46 17 * * 0,3" # 2:46
             EXCLUDES: "tmp"
             COMPRESS: "true"
             #DATETIME: "true"
@@ -296,7 +296,7 @@ services:
             S3_PREFIX: google/photos
             AWS_REGION: ${AWS_REGION}
             SCHEDULE_TIME: "17:51" # requires zero fill 02:51
-            SCHEDULE_WEEKDAY: "0,2,4"
+            SCHEDULE_WEEKDAY: "0,3"
             ONESHOT: 0
             DEBUG: 0
             ALBUM: 1
@@ -311,7 +311,7 @@ services:
         links:
             - discordbot
         environment:
-            RCLONE_CROND_SCHEDULE: "02 18 * * 0,2,4" # 03:02
+            RCLONE_CROND_SCHEDULE: "02 18 * * 0,3" # 03:02
             RCLONE_CROND_SOURCE_PATH: "drive:"
             RCLONE_CROND_DESTINATION_PATH: "/data"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
@@ -346,7 +346,7 @@ services:
         links:
             - discordbot
         environment:
-            RCLONE_CROND_SCHEDULE: "02 00 * * 0,2,4" # 09:02
+            RCLONE_CROND_SCHEDULE: "02 00 * * 0,3" # 09:02
             RCLONE_CROND_SOURCE_PATH: "/data"
             RCLONE_CROND_DESTINATION_PATH: "s3:k2b/google/drive"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
