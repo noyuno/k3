@@ -62,7 +62,7 @@ services:
             POSTGRES_USER: gitbucket
             POSTGRES_PASSWORD: ${GITBUCKET_DB_PASSWORD}
         volumes:
-            - ./data/gitbucket/postgres:/var/lib/postgresql/data
+            - ./db/gitbucket:/var/lib/postgresql/data
 
     gitbucket-db-backup:
         build: postgres-backup-s3
@@ -126,7 +126,7 @@ services:
             POSTGRES_USER: owncloud
             POSTGRES_PASSWORD: ${OWNCLOUD_DB_PASSWORD}
         volumes:
-            - ./data/owncloud/postgres:/var/lib/postgresql/data
+            - ./db/owncloud:/var/lib/postgresql/data
 
     owncloud-db-backup:
         build: postgres-backup-s3
@@ -161,7 +161,7 @@ services:
             AWS_REGION: ap-northeast-1
             S3_PATH: s3://${S3_BUCKET}/backup/
             CRON_SCHEDULE: "46 17 * * 0,3" # 2:46
-            EXCLUDES: "tmp"
+            EXCLUDES: "tmp,db"
             COMPRESS: "true"
             #DATETIME: "true"
         volumes:
@@ -187,7 +187,7 @@ services:
         volumes:
             - ./data/discordbot:/data/discordbot
             - ./logs/discordbot:/logs/discordbot
-            - ./discordbot:/opt/discordbot
+            - ./discordbot:/opt/discordbot:ro
         environment:
             DEPLOY: /opt/discordbot
             DISCORD_TOKEN: ${DISCORD_TOKEN}
@@ -321,7 +321,7 @@ services:
             - SYS_ADMIN
         restart: always
         # oneshot
-        #command: /opt/rclone/rclone.sh run sync
+        #command: /opt/rcloned/rclone.sh run sync
         security_opt:
             - apparmor:unconfined
         tty: true
@@ -333,9 +333,9 @@ services:
         volumes:
             - ./data/rclone-drive:/root/.config/rclone
             - ./tmp/rclone-drive:/data
-            - ./rclone:/opt/rclone
-            - ./logs/rclone:/logs
-            - ./rclone/monit.d:/etc/monit.d
+            - ./rcloned:/opt/rcloned
+            - ./logs/rcloned:/logs
+            - ./rcloned/monit.d:/etc/monit.d
         # docker run --rm -it -v $(pwd)/data/rclone:/root/.config/rclone openbridge/ob_bulkstash rclone config
         # n s3 4 1 <enter> <key> <secret> 11 <enter> 11 <enter> <enter> <enter> <enter> n y
         # n drive 12 <id> <secret> 2 <enter> <enter> n n <paste> n y
@@ -356,7 +356,7 @@ services:
             - SYS_ADMIN
         restart: always
         # oneshot
-        #command: /opt/rclone/rclone.sh run sync
+        #command: /opt/rcloned/rclone.sh run sync
         security_opt:
             - apparmor:unconfined
         tty: true
@@ -368,7 +368,7 @@ services:
         volumes:
             - ./data/rclone-drive:/root/.config/rclone:ro
             - ./tmp/rclone-drive:/data:ro
-            - ./rclone:/opt/rclone:ro
-            - ./logs/rclone:/logs
-            - ./rclone/monit.d:/etc/monit.d:ro
+            - ./rcloned:/opt/rcloned:ro
+            - ./logs/rcloned:/logs
+            - ./rcloned/monit.d:/etc/monit.d:ro
             

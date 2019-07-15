@@ -8,10 +8,10 @@ ENV BUILD_DEPS \
       linux-headers \
       unzip \
       fuse
-env BASEDIR="/opt/rclone"
+env BASEDIR="/opt/rcloned"
 
 COPY build.sh /build.sh
 RUN /build.sh
 
-ENTRYPOINT ["/opt/rclone/docker-entrypoint.sh"]
+ENTRYPOINT ["/opt/rcloned/docker-entrypoint.sh"]
 CMD [""]
