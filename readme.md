@@ -75,12 +75,12 @@ draw dependency of docker container: `docker run --rm -it --name dcv -v $(pwd):/
 
 | instance name       | target       | software           | generation | span   | time  | expires | path                   |
 |---------------------|--------------|--------------------|------------|--------|-------|---------|------------------------|
-| gitbucket-db-backup | gitbucket-db | postgres-backup-s3 | 1+3        | 2/week | 02:48 | latest:-, other:2 week | k2b/large/db/gitbucket |
-| owncloud-db-backup  | gitbucket-db | postgres-backup-s3 | 1+3        | 2/week | 03:16 | latest:-, other:2 week | k2b/large/db/owncloud  |
-| backupd             | all files    | backupd            | 1+3        | 2/week | 02:46 | latest:-, other:2 week | k2b/backup/files       |
-| photod              | Google Photos | photod            | 1          | 2/week | 02:51 | -       | k2b/google/photos      |
+| gitbucket-db-backup | gitbucket-db | postgres-backup-s3 | 1+3        | 2/week | 02:48 | latest:-, other:2 week | s3://k2b/large/db/gitbucket |
+| owncloud-db-backup  | gitbucket-db | postgres-backup-s3 | 1+3        | 2/week | 03:16 | latest:-, other:2 week | s3://k2b/large/db/owncloud  |
+| backupd             | all files    | backupd            | 1+3        | 2/week | 02:46 | latest:-, other:2 week | s3://k2b/backup/files       |
+| photod              | Google Photos | photod            | 1          | 2/week | 02:51 | -       | s3://k2b/google/photos      |
 | rclone-drive-local  | Google Drive | rcloned            | 1          | 2/week | 03:02 | -       | ./tmp/rclone-drive |
-| rclone-drive-s3     | ./tmp/rclone | rcloned            | 1          | 2/week | 09:02 | -       | k2b/google/drive       |
+| rclone-drive-s3     | ./tmp/rclone | rcloned            | 1          | 2/week | 09:02 | -       | s3://k2b/google/drive       |
 
 ## Restore
 
