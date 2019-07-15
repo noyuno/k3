@@ -33,7 +33,7 @@ services:
             - ./data/cert:/var/lib/https-portal
             - ./nginx:/var/lib/nginx-conf:ro
             - ./html:/var/www/vhosts
-            - ./animed/html:/var/www/vhosts/anime.${DOMAIN}:ro
+            - ./animed/html:/var/www/vhosts/anime.${DOMAIN}
             - ./data/animed:/var/www/vhosts/anime.${DOMAIN}/data
 
     php7:
