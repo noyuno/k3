@@ -29,6 +29,7 @@ services:
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
             FORCE_RENEW: 'false'
             CLIENT_MAX_BODY_SIZE: '15g'
+            WEBSOCKET: "true"
         volumes:
             - ./data/cert:/var/lib/https-portal
             - ./nginx:/var/lib/nginx-conf:ro
