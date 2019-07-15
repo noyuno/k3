@@ -111,45 +111,52 @@ aws configure
 
 ### k2
 
-1. Set up
+In installed CoreOS instance,
 
-2. Restore items from Glacier.
-
-~~~sh
-aws s3api restore-object --restore-request Days=5 --bucket k2b --key backup/files/20190711-1746.tar.gz
-aws s3api list-objects-v2 --bucket k2b --prefix large/files --query "Contents[?StorageClass=='GLACIER']" --output text | \
-    awk -F\\t '{print $2}' | \
-    xargs -t -L 1 aws s3api restore-object --restore-request Days=5 --bucket k2b --key
-aws s3api restore-object --restore-request Days=5 --bucket k2b --key large/db/gitbucket/gitbucket-20190711-1748.sql.gz
-aws s3api restore-object --restore-request Days=5 --bucket k2b --key large/db/owncloud/owncloud-20190711-1748.sql.gz
-~~~
-
-3. Wait 5 hours.
-
-In instance(ssh),
-
-4. Download items. If error occured, check state and try again.
+1. Set up `awscli`
 
 ~~~sh
-mkdir -p s3/{large,db}
 # install awscli
 toolbox
 toolbox > yum install -y awscli
 
 # check state
 toolbox aws configure # input AWS Access Key ID, Access Key Secret, Region(ap-northeast-1)
-toolbox aws s3api head-object --bucket k2b --key (key)
+~~~
+
+2. Download items. If error occured, check state and try again.
+
+~~~sh
+mkdir -p s3/{large,db}
 
 # download
-toolbox aws s3 cp --force-glacier-transfer s3://k2b/backup/files/20190711-1746.tar.gz /media/root/home/noyuno/s3/k2.tar.gz
-toolbox aws s3 sync --force-glacier-transfer s3://k2b/large/files /media/root/home/noyuno/s3/backup/large
-toolbox aws s3 cp --force-glacier-transfer s3://k2b/large/db/gitbucket/gitbucket-20190711-1748.sql.gz /media/root/home/noyuno/s3/db
+toolbox aws s3 sync s3://k2b/backup /media/root/home/noyuno/s3
 
 # extract
 cd s3
-tar -xf k2.tar.gz
+tar -xf backupd.tar.gz
+mv data ~/k2
+gunzip -c gitbucket.sql.gz > gitbucket.sql
+gunzip -c owncloud.sql.gz > owncloud.sql
+~~~
 
-gunzip -c out/k2/db/gitbucket-20190711-1748.sql.gz > out/k2/db/gitbucket-20190711-1748.sql
+3. Import database
+
+~~~sh
+cd ~/k2
+# install docker-compose
+./bin/install
+# import database
+dc up -d gitbucket-db owncloud-db
+dc exec -T gitbucket-db psql -U gitbucket -d gitbucket < ~/s3/gitbucket.sql
+dc exec -T owncloud-db psql -U owncloud -d owncloud < ~/s3/owncloud.sql
+dc down
+~~~
+
+4. Start services
+
+~~~sh
+dc up -d
 ~~~
 
 ### Google data

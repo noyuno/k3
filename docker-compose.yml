@@ -315,7 +315,7 @@ services:
             RCLONE_CROND_SOURCE_PATH: "drive:"
             RCLONE_CROND_DESTINATION_PATH: "/data"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
-            CONTAINER_NAME: "rclone-drive"
+            CONTAINER_NAME: "rclone-drive-local"
         cap_add:
             - MKNOD
             - SYS_ADMIN
@@ -331,8 +331,8 @@ services:
                 soft: 49999
                 hard: 99999
         volumes:
-            - ./data/rclone:/root/.config/rclone
-            - ./tmp/google-drive:/data
+            - ./data/rclone-drive:/root/.config/rclone
+            - ./tmp/rclone-drive:/data
             - ./rclone:/opt/rclone
             - ./logs/rclone:/logs
             - ./rclone/monit.d:/etc/monit.d
@@ -350,7 +350,7 @@ services:
             RCLONE_CROND_SOURCE_PATH: "/data"
             RCLONE_CROND_DESTINATION_PATH: "s3:k2b/google/drive"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
-            CONTAINER_NAME: "rclone-s3"
+            CONTAINER_NAME: "rclone-drive-s3"
         cap_add:
             - MKNOD
             - SYS_ADMIN
@@ -366,8 +366,8 @@ services:
                 soft: 49999
                 hard: 99999
         volumes:
-            - ./data/rclone:/root/.config/rclone:ro
-            - ./tmp/google-drive:/data:ro
+            - ./data/rclone-drive:/root/.config/rclone:ro
+            - ./tmp/rclone-drive:/data:ro
             - ./rclone:/opt/rclone:ro
             - ./logs/rclone:/logs
             - ./rclone/monit.d:/etc/monit.d:ro
