@@ -24,7 +24,7 @@ services:
                 git.${DOMAIN} -> http://gitbucket:8080,
                 s3.${DOMAIN} -> http://minio:9000,
                 anime.${DOMAIN},
-                status.${DOMAIN} -> http://grafana:3000,
+                monitoring.${DOMAIN} -> http://grafana:3000,
                 portainer.${DOMAIN} -> http://portainer:9000,
                 photos.${DOMAIN} -> http://photod:80,
                 drive.${DOMAIN} -> http://owncloud:8080,
