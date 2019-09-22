@@ -287,6 +287,8 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - ./data/portainer:/data
+        environment:
+            CAP_HOST_MANAGEMENT: 1
 
     photod:
         build: photod
