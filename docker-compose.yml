@@ -408,4 +408,3 @@ services:
             CAMERA_PASSWORD: "${CAMERA_PASSWORD}"
         volumes:
             - ./tmp/camera:/data/photos
-            - ./camera:/opt/camera:ro
