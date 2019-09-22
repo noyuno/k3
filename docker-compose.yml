@@ -88,7 +88,7 @@ services:
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
             SCHEDULE: '23 48 17 * * 0,3' # 2:48: sec min hour day month week
             #DATETIME: "true"
-            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT: discordbot
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
 
     minio:
@@ -154,7 +154,7 @@ services:
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
             SCHEDULE: '23 16 18 * * 0,3' # 3:16: sec min hour day month week
             #DATETIME: "true"
-            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT: discordbot
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
 
     backupd:
@@ -328,7 +328,7 @@ services:
             RCLONE_CROND_DESTINATION_PATH: "/data"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
             CONTAINER_NAME: "rclone-drive-local"
-            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT: discordbot
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
         cap_add:
             - MKNOD
@@ -370,7 +370,7 @@ services:
             RCLONE_CROND_DESTINATION_PATH: "s3:k2b/google/drive"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
             CONTAINER_NAME: "rclone-drive-s3"
-            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT: discordbot
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
         cap_add:
             - MKNOD
@@ -402,7 +402,7 @@ services:
         build: camera
         restart: always
         environment:
-            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT: discordbot
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
             CAMERA_USERNAME: "${CAMERA_USERNAME}"
             CAMERA_PASSWORD: "${CAMERA_PASSWORD}"
