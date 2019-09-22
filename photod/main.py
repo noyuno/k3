@@ -46,7 +46,7 @@ class Scheduler():
             self.out.exception('error: scheduler', e)
 
 def main():
-    envse = ['GOOGLE_OAUTH_CLIENT', 'GOOGLE_OAUTH_SECRET', 'DISCORDBOT', 'BASE_URL',
+    envse = ['GOOGLE_OAUTH_CLIENT', 'GOOGLE_OAUTH_SECRET', 'DISCORDBOT', 'DISCORDBOT_TOKEN', 'BASE_URL',
              'S3_BUCKET', 'S3_PREFIX']
 
     out = util.Output(logdir, util.environ_bool('DEBUG'))

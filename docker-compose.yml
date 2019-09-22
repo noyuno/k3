@@ -10,6 +10,8 @@ services:
             - animed
             - portainer
             - owncloud
+            - discordbot
+            - streaming
         ports:
             - 80:80
             - 443:443
@@ -26,6 +28,8 @@ services:
                 portainer.${DOMAIN} -> http://portainer:9000,
                 photos.${DOMAIN} -> http://photod:80,
                 drive.${DOMAIN} -> http://owncloud:8080,
+                discord.${DOMAIN} -> http://discordbot:80,
+                streaming.${DOMAIN} -> http://streaming:80,
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
             FORCE_RENEW: 'false'
             CLIENT_MAX_BODY_SIZE: '15g'
@@ -84,6 +88,8 @@ services:
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
             SCHEDULE: '23 48 17 * * 0,3' # 2:48: sec min hour day month week
             #DATETIME: "true"
+            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
 
     minio:
         image: minio/minio:latest
@@ -148,6 +154,8 @@ services:
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
             SCHEDULE: '23 16 18 * * 0,3' # 3:16: sec min hour day month week
             #DATETIME: "true"
+            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
 
     backupd:
         build: backupd
@@ -164,6 +172,7 @@ services:
             EXCLUDES: "tmp,db"
             COMPRESS: "true"
             #DATETIME: "true"
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
         volumes:
             - ./:/data:ro
             - ./backupd:/opt/backupd:ro
@@ -177,7 +186,7 @@ services:
             - ./data/animed:/data
 
     discordbot:
-        image: noyuno/discordbot:latest
+        build: discordbot
         restart: always
         expose:
             - "80"
@@ -201,6 +210,7 @@ services:
             CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive-local,rclone-drive-s3'
             MORNING: "22:00" # 07:00
             EVENING: "10:00" # 19:00
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
             
     prometheus:
         image: prom/prometheus
@@ -279,7 +289,7 @@ services:
             - ./data/portainer:/data
 
     photod:
-        image: noyuno/photod:latest
+        build: photod
         restart: always
         expose:
             - "80"
@@ -291,6 +301,7 @@ services:
             GOOGLE_OAUTH_SECRET: ${GOOGLE_OAUTH_SECRET}
             BASE_URL: "https://photos.${DOMAIN}"
             DISCORDBOT: "discordbot"
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
             AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
             AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             S3_BUCKET: ${S3_BUCKET}
@@ -308,7 +319,7 @@ services:
             - ./photod:/opt/photod:ro
 
     rclone-drive-local:
-        image: noyuno/rcloned
+        build: rcloned
         links:
             - discordbot
         environment:
@@ -317,6 +328,8 @@ services:
             RCLONE_CROND_DESTINATION_PATH: "/data"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
             CONTAINER_NAME: "rclone-drive-local"
+            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
         cap_add:
             - MKNOD
             - SYS_ADMIN
@@ -341,9 +354,14 @@ services:
         # n s3 4 1 <enter> <key> <secret> 11 <enter> 11 <enter> <enter> <enter> <enter> n y
         # n drive 12 <id> <secret> 2 <enter> <enter> n n <paste> n y
         # q
+        logging:
+        driver: "json-file" # defaults if not specified
+        options:
+            max-size: "10m"
+            max-file: "3"
 
     rclone-drive-s3:
-        image: noyuno/rcloned
+        build: rcloned
         links:
             - discordbot
         environment:
@@ -352,6 +370,8 @@ services:
             RCLONE_CROND_DESTINATION_PATH: "s3:k2b/google/drive"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
             CONTAINER_NAME: "rclone-drive-s3"
+            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
         cap_add:
             - MKNOD
             - SYS_ADMIN
@@ -372,4 +392,21 @@ services:
             - ./rcloned:/opt/rcloned:ro
             - ./logs/rcloned:/logs
             - ./rcloned/monit.d:/etc/monit.d:ro
+        logging:
+            driver: "json-file" # defaults if not specified
+            options:
+                max-size: "10m"
+                max-file: "3"
+                
+    camera:
+        build: streaming
+        restart: always
+        environment:
+            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+            CAMERA_USERNAME: "${CAMERA_USERNAME}"
+            CAMERA_PASSWORD: "${CAMERA_PASSWORD}"
+        volumes:
+            - ./tmp/camera:/data/photos
+            - ./camera:/opt/camera:ro
             

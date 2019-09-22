@@ -63,7 +63,7 @@ class Output():
 
     def message(self, data):
         if type(data) is str:
-            data = { 'message': data }
+            data = { 'message': data, 'token': os.environ.get('DISCORDBOT_TOKEN') }
         self.info('message: {}'.format(data.get('message')))
         if data.get('message') is not None:
             data['message'] = 'photod: ' + data['message']

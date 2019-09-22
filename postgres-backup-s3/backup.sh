@@ -49,6 +49,10 @@ else
   AWS_ARGS="--endpoint-url ${S3_ENDPOINT}"
 fi
 
+if [ ! "$DISCORDBOT" -o ! "$DISCORDBOT_TOKEN" ]; then
+  echo "DISCORDBOT or DISCORDBOT_TOKEN not set" >&2
+fi
+
 # env vars needed for aws tools
 export AWS_ACCESS_KEY_ID=$S3_ACCESS_KEY_ID
 export AWS_SECRET_ACCESS_KEY=$S3_SECRET_ACCESS_KEY
@@ -69,4 +73,4 @@ cat dump.sql.gz | aws $AWS_ARGS s3 cp - s3://$S3_BUCKET/$S3_PREFIX/$FILENAME || 
 
 echo "SQL backup uploaded successfully"
 
-curl -XPOST -sd '{"message": "'"$CONTAINER_NAME"': finished"}' http://discordbot >/dev/null
+curl -XPOST -sd '{"token": "'"$DISCORDBOT_TOKEN"'", "message": "'"$CONTAINER_NAME"': finished"}' http://$DISCORDBOT >/dev/null

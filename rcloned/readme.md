@@ -27,6 +27,8 @@ services:
             RCLONE_CROND_DESTINATION_PATH: "/data"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
             CONTAINER_NAME: "rclone-drive"
+            DISCORDBOT: "${DISCORDBOT}"
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
         cap_add:
             - MKNOD
             - SYS_ADMIN

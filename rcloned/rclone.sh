@@ -12,7 +12,7 @@ source /cron/rclone.env
 
 function message() {
     echo "$1"
-    curl -XPOST -sd '{"message": "'"$CONTAINER_NAME"': '"$1"'"}' http://discordbot >/dev/null
+    curl -XPOST -sd '{"token": "'"$DISCORDBOT_TOKEN"'", "message": "'"$CONTAINER_NAME"': '"$1"'"}' http://$DISCORDBOT >/dev/null
     if [ $? -ne 0 ]; then
         echo "$CONTAINER_NAME: failed to send message to discordbot"
     fi

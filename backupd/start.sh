@@ -5,8 +5,8 @@ set -e
 export DATA_PATH=${DATA_PATH:-/data/}
 CRON_SCHEDULE=${CRON_SCHEDULE:-0 1 * * *}
 
-if [ ! "$AWS_ACCESS_KEY_ID" -o ! "$AWS_SECRET_ACCESS_KEY" -o ! "$AWS_REGION" -o ! "${S3_PATH}" ]; then
-    echo "Required environment variable not set. It requires AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, S3_PATH" >&2
+if [ ! "$AWS_ACCESS_KEY_ID" -o ! "$AWS_SECRET_ACCESS_KEY" -o ! "$AWS_REGION" -o ! "${S3_PATH}" -o ! "$DISCORDBOT" -o ! "$DISCORDBOT_TOKEN"]; then
+    echo "Required environment variable not set. It requires AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION, S3_PATH, DISCORDBOT, DISCORDBOT_TOKEN" >&2
     exit 1
 fi
 
@@ -36,7 +36,7 @@ else
     CRON_ENV="PARAMS='$PARAMS'"
     CRON_ENV="$CRON_ENV\nDATA_PATH='$DATA_PATH'"
     CRON_ENV="$CRON_ENV\nS3_PATH='$S3_PATH'"
-    echo "$CRON_SCHEDULES" | tr ";" "\n" | while read line ; do
+    echo "$CRON_SCHEDULE" | tr ";" "\n" | while read line ; do
         echo -e "$CRON_ENV\n$line $BASEDIR/sync.sh > $LOGFIFO 2>&1" >>/tmp/cron   
     done
     crontab /tmp/cron

@@ -4,7 +4,7 @@ import asyncio
 import sys
 import socket
 
-def makeAPIHandler(sendqueue, logger):
+def makeAPIHandler(sendqueue, logger, token):
     class APIHandler(BaseHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
             super(APIHandler, self).__init__(*args, **kwargs)
@@ -21,8 +21,11 @@ def makeAPIHandler(sendqueue, logger):
             try:
                 s = self.rfile.read(int(self.headers.get('content-length'))).decode('utf-8')
                 got = json.loads(s)
-                self.sendqueue.put(got)
-                res = { 'status': 200 }
+                if got['token'] is not None and got['token'] == token:
+                    self.sendqueue.put(got)
+                    res = { 'status': 200 }
+                else:
+                    res = { 'status': 403 }
             except Exception as e:
                 res = { 'status': 500 }
                 self.logger.exception('APIHandler.do_POST()', stack_info=True)
@@ -37,14 +40,15 @@ def makeAPIHandler(sendqueue, logger):
     return ret
 
 class API():
-    def __init__(self, loop, sendqueue, logger):
+    def __init__(self, loop, sendqueue, logger, token):
         self.loop = loop
         self.sendqueue = sendqueue
         self.logger = logger
+        self.token = token
 
     def run(self):
         asyncio.set_event_loop(self.loop)
-        handler = makeAPIHandler(self.sendqueue, self.logger)
+        handler = makeAPIHandler(self.sendqueue, self.logger, self.token)
         server = HTTPServer(('discordbot', 80), handler)
         self.logger.debug('listen api at {0}'.format(socket.gethostbyname_ex(socket.gethostname())))
         server.serve_forever()

@@ -58,7 +58,7 @@ class Scheduler():
         self.weather.run()
 
 def main():
-    envse = ['DISCORD_TOKEN', 'DISCORD_CHANNEL_NAME']
+    envse = ['DISCORD_TOKEN', 'DISCORD_CHANNEL_NAME', 'DISCORDBOT_TOKEN']
     envsc = ['LOCATION', 'XRAIN_ZOOM', 'MANET',
              'GOOGLE_MAPS_API_KEY', 'DARK_SKY_API_KEY', 'CADVISOR', 'CONTAINERS', 'MORNING', 'EVENING']
 
@@ -71,7 +71,7 @@ def main():
     sendqueue = queue.Queue()
 
     httploop = asyncio.new_event_loop()
-    ap = api.API(httploop, sendqueue, logger)
+    ap = api.API(httploop, sendqueue, logger, os.environ.get('DISCORDBOT_TOKEN'))
     threading.Thread(target=ap.run, name='api').start()
 
     wea = weather.Weather(sendqueue, logger)
