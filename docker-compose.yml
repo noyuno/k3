@@ -11,7 +11,7 @@ services:
             - portainer
             - owncloud
             - discordbot
-            - streaming
+            - camera
         ports:
             - 80:80
             - 443:443
@@ -29,7 +29,7 @@ services:
                 photos.${DOMAIN} -> http://photod:80,
                 drive.${DOMAIN} -> http://owncloud:8080,
                 discord.${DOMAIN} -> http://discordbot:80,
-                streaming.${DOMAIN} -> http://streaming:80,
+                camera.${DOMAIN} -> http://camera:80,
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
             FORCE_RENEW: 'false'
             CLIENT_MAX_BODY_SIZE: '15g'
@@ -207,7 +207,7 @@ services:
             CADVISOR: 'cadvisor:8080'
             MANET: 'manet:8891'
             XRAIN_ZOOM: ${XRAIN_ZOOM}
-            CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive-local,rclone-drive-s3'
+            CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive-local,rclone-drive-s3,camera'
             MORNING: "22:00" # 07:00
             EVENING: "10:00" # 19:00
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
@@ -355,10 +355,10 @@ services:
         # n drive 12 <id> <secret> 2 <enter> <enter> n n <paste> n y
         # q
         logging:
-        driver: "json-file" # defaults if not specified
-        options:
-            max-size: "10m"
-            max-file: "3"
+            driver: "json-file" # defaults if not specified
+            options:
+                max-size: "10m"
+                max-file: "3"
 
     rclone-drive-s3:
         build: rcloned
@@ -399,7 +399,7 @@ services:
                 max-file: "3"
                 
     camera:
-        build: streaming
+        build: camera
         restart: always
         environment:
             DISCORDBOT: "${DISCORDBOT}"
@@ -409,4 +409,3 @@ services:
         volumes:
             - ./tmp/camera:/data/photos
             - ./camera:/opt/camera:ro
-            
