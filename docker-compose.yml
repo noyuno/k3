@@ -407,7 +407,18 @@ services:
         environment:
             DISCORDBOT: discordbot
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
-            CAMERA_USERNAME: "${CAMERA_USERNAME}"
-            CAMERA_PASSWORD: "${CAMERA_PASSWORD}"
+            PE_USERNAME: "${PE_USERNAME}"
+            PE_PASSWORD: "${PE_PASSWORD}"
         volumes:
             - ./tmp/camera:/data/photos
+
+    envsensor:
+        build: envsensor
+        restart: "on-failure:5"
+        expose:
+            - "3000"
+        environment:
+            DISCORDBOT: discordbot
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+        volumes:
+            

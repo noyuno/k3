@@ -2,6 +2,7 @@ extends layout
 
 block content
   #header
+    a(href='/').title PE /
     a(href='#').title= title
     select#directories(onChange="changeDir()")
       if directories.length == 0
@@ -16,8 +17,8 @@ block content
     each f in files
       .item
         .list-caption= f.match(/(.*)(?:\.([^.]+$))/)[1]
-        a.galleryitem(href="/images/#{directory}/#{f}", target='_blank')
-          img.list-img(src="/images/#{directory}/#{f}")
+        a.galleryitem(href="/photos/#{directory}/#{f}", target='_blank')
+          img.list-img(src="/photos/#{directory}/#{f}")
 
   script.
     const changeDir = () => {
@@ -29,13 +30,13 @@ block content
     const moveDate = (date) => {
       $.ajax({
         type: 'GET',
-        url: '/images/' + date,
+        url: '/photos/' + date,
         dataType: 'json',
         success: (data, dataType) => {
           var clone = $('#list').empty();
           
           data.files.forEach( (f) => {
-            const src = '/images/' + data.directory + '/' + f;
+            const src = '/photos/' + data.directory + '/' + f;
             var img = $('<img>').attr({
               src: src,
               class: 'list-img'});
@@ -82,5 +83,11 @@ block content
         const date = window.location.hash.replace('#', '');
         $('#directories').val(date)
         moveDate(date);
+      } else {
+        initializeGallery();
       }
+      setInterval(() => {
+        const date = $('#directories option:selected').text();
+        moveDate(date);
+      }, 1000 * 60);
     }

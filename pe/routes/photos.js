@@ -27,8 +27,8 @@ var Strategy = require('passport-http').DigestStrategy;
 
 passport.use(new Strategy({ qop: 'auth' },
   function(username, done) {
-    if (!!username && username == process.env.CAMERA_USERNAME) {
-      return done(null, process.env.CAMERA_USERNAME, process.env.CAMERA_PASSWORD)
+    if (!!username && username == process.env.PE_USERNAME) {
+      return done(null, process.env.PE_USERNAME, process.env.PE_PASSWORD)
     } else {
       return done(null, false);
     }
@@ -40,11 +40,10 @@ passport.use(new Strategy({ qop: 'auth' },
 
 
 // return directories and today files
-router.get('/',
+router.get('/photos',
   passport.authenticate('digest', {session: false}), 
   function(req, res, next) {
     try {
-      console.log('return directories and today files')
       var dirs = fs.readdirSync(imagespath);
       dirs = dirs.filter(function(dir){
         return fs.statSync(imagespath + "/" + dir).isDirectory(); /* && /.*\.csv$/.test(file);*/ //絞り込み
@@ -66,7 +65,7 @@ router.get('/',
           console.log(err);
         }
       }
-      res.render('index', {
+      res.render('photos', {
         title: 'Camera photos',
         directories: dirs,
         directory: dirs[0],
@@ -82,10 +81,9 @@ router.get('/',
   });
 
 // return files
-router.get('/images/:directory',
+router.get('/photos/:directory',
   passport.authenticate('digest', {session: false}), 
   function(req, res, next) {
-    console.log('return files');
     try {
       var files = fs.readdirSync(imagespath + "/" + req.params.directory);
       var filelist = files.filter(function(file){
@@ -107,11 +105,10 @@ router.get('/images/:directory',
   });
 
 // show a image
-router.get('/images/:directory/:name',
+router.get('/photos/:directory/:name',
   passport.authenticate('digest', {session: false}), 
   function(req, res, next) {
     try {
-      console.log('show a image');
       var options = {
         root: imagespath + "/" + req.params.directory,
         dotfiles: 'deny',
@@ -136,17 +133,11 @@ router.get('/images/:directory/:name',
   });
 
 // upload a image
-router.post('/', 
+router.post('/photos', 
   passport.authenticate('digest', {session: false}), 
   upload.single('file'), function(req, res) {
-    console.log(req.file.path, req.file.originalname);
     try {
       res.json({ 'result': 'success' });
-      uploadtimeout = setTimeout(() => {
-        const t = 'Could not receive photos from A in the last hour';
-        console.error(t);
-        
-      });
     } catch (err) {
       console.error(err);
       res.status(500).json({
@@ -155,7 +146,6 @@ router.post('/',
       });
     }
 });
-// 
 
 
 module.exports = router;

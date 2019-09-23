@@ -1,8 +1,8 @@
 from node:alpine
 
 run mkdir -p /data/photos
-copy . /opt/camera
-workdir /opt/camera
+copy . /opt/pe
+workdir /opt/pe
 run npm install
 
 cmd [ "npm", "start" ]
