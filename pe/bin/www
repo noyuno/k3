@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-if (!process.env.CAMERA_USERNAME || !process.env.CAMERA_PASSWORD) {
-  console.error("environment variable CAMERA_USERNAME, CAMERA_PASSWORD missing");
+if (!process.env.PE_USERNAME || !process.env.PE_PASSWORD) {
+  console.error("environment variable PE_USERNAME, PE_PASSWORD missing");
   process.exit(1);
 }
 
