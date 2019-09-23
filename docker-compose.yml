@@ -29,7 +29,7 @@ services:
                 photos.${DOMAIN} -> http://photod:80,
                 drive.${DOMAIN} -> http://owncloud:8080,
                 discord.${DOMAIN} -> http://discordbot:80,
-                camera.${DOMAIN} -> http://camera:3000,
+                pe.${DOMAIN} -> http://pe:3000,
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
             FORCE_RENEW: 'false'
             CLIENT_MAX_BODY_SIZE: '15g'
