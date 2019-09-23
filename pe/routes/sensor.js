@@ -118,7 +118,7 @@ router.get('/:directory/:name',
 // upload a image
 router.post('/sensor', 
   passport.authenticate('digest', {session: false}), 
-  upload.single('file'), function(req, res) {
+  function(req, res) {
     try {
       res.json({ 'result': 'success' });
     } catch (err) {
