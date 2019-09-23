@@ -9,9 +9,10 @@ if (!process.env.PE_USERNAME || !process.env.PE_PASSWORD) {
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('camera:server');
-var http = require('http');
+import {app} from '../app.mjs'
+import _debug from 'debug'
+var debug = _debug('camera:server')
+import http from 'http'
 
 
 /**

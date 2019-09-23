@@ -1,31 +1,19 @@
-var fs = require('fs');
-var strftime = require('strftime');
-require('date-utils');
+import fs from 'fs';
+import strftime from 'strftime'
+import date_utils from 'date-utils';
 
-var express = require('express');
-var router = express.Router();
+import express from 'express';
+var _router = express.Router();
 
-var passport = require('passport');
-var Strategy = require('passport-http').DigestStrategy;
+const imagespath = '/data/photos'
 
-passport.use(new Strategy({ qop: 'auth' },
-  function(username, done) {
-    if (!!username && username == process.env.PE_USERNAME) {
-      return done(null, process.env.PE_USERNAME, process.env.PE_PASSWORD)
-    } else {
-      return done(null, false);
-    }
-  },
-  function(params, done) {
-    done(null, true)
-  }
-));
-
+import {upload} from './upload.mjs';
+import {pass} from './passport-digest.mjs';
 
 // return directories and today files
-router.get('/',
-  passport.authenticate('digest', {session: false}), 
-  function(req, res, next) {
+_router.get('/photos',
+  pass.authenticate('digest', {session: false}), 
+  (req, res, next) => {
     try {
       var dirs = fs.readdirSync(imagespath);
       dirs = dirs.filter(function(dir){
@@ -64,8 +52,8 @@ router.get('/',
   });
 
 // return files
-router.get('/:directory',
-  passport.authenticate('digest', {session: false}), 
+_router.get('/photos/:directory',
+  pass.authenticate('digest', {session: false}), 
   function(req, res, next) {
     try {
       var files = fs.readdirSync(imagespath + "/" + req.params.directory);
@@ -88,8 +76,8 @@ router.get('/:directory',
   });
 
 // show a image
-router.get('/:directory/:name',
-  passport.authenticate('digest', {session: false}), 
+_router.get('/photos/:directory/:name',
+  pass.authenticate('digest', {session: false}), 
   function(req, res, next) {
     try {
       var options = {
@@ -116,9 +104,9 @@ router.get('/:directory/:name',
   });
 
 // upload a image
-router.post('/sensor', 
-  passport.authenticate('digest', {session: false}), 
-  function(req, res) {
+_router.post('/photos', 
+  pass.authenticate('digest', {session: false}), 
+  upload.single('file'), function(req, res) {
     try {
       res.json({ 'result': 'success' });
     } catch (err) {
@@ -130,5 +118,4 @@ router.post('/sensor',
     }
 });
 
-
-module.exports = router;
+export const router = _router;
