@@ -11,7 +11,7 @@ services:
             - portainer
             - owncloud
             - discordbot
-            - camera
+            - pe
         ports:
             - 80:80
             - 443:443
