@@ -2,6 +2,7 @@ import asyncio
 import discord
 import sys
 import textwrap
+import io
 
 class DiscordClient(discord.Client):
     def __init__(self, channelname, sendqueue, weather, monitoring, logger, *args, **kwargs):
@@ -74,7 +75,7 @@ class DiscordClient(discord.Client):
             e.set_image(url=q.get('video'))
             anyembed = True
         if q.get('imagefile') is not None:
-            fileinstance = discord.File(q.get('imagefile'), 'image.png')
+            fileinstance = discord.File(io.BytesIO(q.get('imagefile')), 'image.png')
         if anyembed:
             await self.channel.send(message, embed=e, file=fileinstance)
         else:

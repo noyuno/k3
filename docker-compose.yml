@@ -206,11 +206,14 @@ services:
             LOCATION: ${LOCATION}
             CADVISOR: 'cadvisor:8080'
             MANET: 'manet:8891'
+            XRAIN_LAT: ${XRAIN_LAT}
+            XRAIN_LON: ${XRAIN_LON}
             XRAIN_ZOOM: ${XRAIN_ZOOM}
             CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive-local,rclone-drive-s3,camera'
             MORNING: "22:00" # 07:00
             EVENING: "10:00" # 19:00
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+            PORT: 80
             
     prometheus:
         image: prom/prometheus
@@ -230,11 +233,7 @@ services:
     cadvisor:
         image: google/cadvisor:latest
         restart: "on-failure:5"
-        volumes:
-            - /:/rootfs:ro
-            - /var/run:/var/run:rw
-            - /sys:/sys:ro
-            - /var/lib/docker/:/var/lib/docker:ro
+
         expose:
             - 8080
         privileged: true

@@ -14,23 +14,6 @@ import api
 import weather
 import monitoring
 
-logdir = '/logs/discordbot'
-os.makedirs(logdir, exist_ok=True)
-starttime = datetime.now().strftime('%Y%m%d-%H%M')
-logging.getLogger().setLevel(logging.WARNING)
-logger = logging.getLogger('discordbot')
-logger.setLevel(logging.INFO)
-logFormatter = logging.Formatter(fmt='%(asctime)s %(levelname)s: %(message)s',
-                                 datefmt='%Y%m%d-%H%S')
-fileHandler = logging.FileHandler('/{}/{}'.format(logdir, starttime))
-fileHandler.setFormatter(logFormatter)
-logger.addHandler(fileHandler)
-consoleHandler = logging.StreamHandler()
-consoleHandler.setFormatter(logFormatter)
-logger.addHandler(consoleHandler)
-
-logger.info('started discordbot at {0}'.format(starttime))
-
 class Scheduler():
     def __init__(self, sendqueue, weather, monitoring, logger, loop):
         self.sendqueue = sendqueue
@@ -57,10 +40,30 @@ class Scheduler():
         self.sendqueue.put({ 'message': 'おはようございます'})
         self.weather.run()
 
-def main():
+def initlogger():
+    logdir = '/logs/discordbot'
+    os.makedirs(logdir, exist_ok=True)
+    starttime = datetime.now().strftime('%Y%m%d-%H%M')
+    logging.getLogger().setLevel(logging.WARNING)
+    logger = logging.getLogger('discordbot')
+    if os.environ.get('DEBUG'):
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
+    logFormatter = logging.Formatter(fmt='%(asctime)s %(levelname)s: %(message)s',
+                                     datefmt='%Y%m%d-%H%S')
+    fileHandler = logging.FileHandler('/{}/{}'.format(logdir, starttime))
+    fileHandler.setFormatter(logFormatter)
+    logger.addHandler(fileHandler)
+    consoleHandler = logging.StreamHandler()
+    consoleHandler.setFormatter(logFormatter)
+    logger.addHandler(consoleHandler)
+    return logger, starttime
+
+def main(logger):
     envse = ['DISCORD_TOKEN', 'DISCORD_CHANNEL_NAME', 'DISCORDBOT_TOKEN']
     envsc = ['LOCATION', 'XRAIN_ZOOM', 'MANET',
-             'GOOGLE_MAPS_API_KEY', 'DARK_SKY_API_KEY', 'CADVISOR', 'CONTAINERS', 'MORNING', 'EVENING']
+             'GOOGLE_MAPS_API_KEY', 'DARK_SKY_API_KEY', 'CADVISOR', 'CONTAINERS', 'MORNING', 'EVENING', 'XRAIN_LAT', 'XRAIN_LON', 'PORT']
 
     f = util.environ(envse, 'error')
     util.environ(envsc, 'warning')
@@ -85,5 +88,7 @@ def main():
     client.run(os.environ.get('DISCORD_TOKEN'))
 
 if __name__ == '__main__':
-    main()
+    logger, starttime = initlogger()
+    logger.info('started discordbot at {0}'.format(starttime))
+    main(logger)
 

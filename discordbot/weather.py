@@ -25,20 +25,25 @@ class Weather():
         tx.start()
 
     def location(self, loc=None):
+        lat = None
+        lng = None
         if loc is None:
             loc = os.environ.get('LOCATION')
+            lat = os.environ.get('XRAIN_LAT')
+            lng = os.environ.get('XRAIN_LON')
         if loc == "":
             loc = 'Tokyo'
-        url = 'https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'.format(
-                loc, os.environ.get('GOOGLE_MAPS_API_KEY'))
-        # debug
-        self.logger.debug(url)
-        r = requests.get(url).json()
-        if r['status'] != "OK" or len(r['results']) == 0:
-            raise RuntimeError('Weather.location(): Google API returned {}'.format(r['status']))
+        if lat == None or lng == None:
+            url = 'https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'.format(
+                    loc, os.environ.get('GOOGLE_MAPS_API_KEY'))
+            # debug
+            self.logger.debug(url)
+            r = requests.get(url).json()
+            if r['status'] != "OK" or len(r['results']) == 0:
+                raise RuntimeError('Weather.location(): Google API returned {}'.format(r['status']))
 
-        lat = r['results'][0]['geometry']['location']['lat']
-        lng = r['results'][0]['geometry']['location']['lng']
+            lat = r['results'][0]['geometry']['location']['lat']
+            lng = r['results'][0]['geometry']['location']['lng']
         # debug
         #self.sendqueue.put({'message': 'lat: {0}, lng: {1}'.format(lat, lng)})
         return (loc, lat, lng)
@@ -66,7 +71,7 @@ class Weather():
                     util.unixtimestrt(item['time']),
                     item['summary'],
                     int(item['temperature']),
-                    int(item['precipProbability'] * 100))
+                    int(item['humidity'] * 100))
             self.sendqueue.put({'message': '''{0}時点の{1}の天気: {2}, {3}度, 湿度{4}%, 風速{5}m/s
 予報: {6}
 {7}'''.format(
@@ -96,12 +101,17 @@ class Weather():
             # debug
             self.logger.debug(url)
             r = requests.get(url)
-            if 'image' not in r.headers['content-type']:
-                pass
-                # error
-                self.sendqueue.put({'message': 'could not get screenshot' })
-                return
-            self.sendqueue.put({ 'imagefile': r.content })
+            if r.status_code == 200:
+                if 'image' in r.headers['content-type']:
+                    with open('/tmp/xrain.png', 'wb') as f:
+                        f.write(r.content)
+                    self.sendqueue.put({ 'imagefile': r.content })
+                else:
+                    # error
+                    self.sendqueue.put({'message': 'could not get screenshot. content-type={0}'.format(r.headers['content-type']) })
+                    return
+            else:
+                self.sendqueue.put({'message': 'could not get screenshot. code={0}'.format(r.status_code)})
         except Exception as e:
             msg = 'xrain()'
             self.logger.exception(msg, stack_info=True)

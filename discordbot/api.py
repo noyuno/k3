@@ -3,6 +3,8 @@ import json
 import asyncio
 import sys
 import socket
+from urllib.parse import urlparse
+import os
 
 def makeAPIHandler(sendqueue, logger, token):
     class APIHandler(BaseHTTPRequestHandler):
@@ -10,10 +12,31 @@ def makeAPIHandler(sendqueue, logger, token):
             super(APIHandler, self).__init__(*args, **kwargs)
 
         def do_GET(self):
-            self.send_response(200)
-            self.send_header('content-type', 'text')
-            self.end_headers()
-            self.wfile.write('discordbot'.encode('utf-8'))
+            parsed_path = urlparse(self.path).path
+            if parsed_path == "/":
+                self.send_response(200)
+                self.send_header('content-type', 'text')
+                self.end_headers()
+                self.wfile.write('discordbot\nhello'.encode('utf-8'))
+            elif parsed_path == "/xrain":
+                try:
+                    b = None
+                    with open('/tmp/xrain.png', 'rb') as content:
+                        b = content.read()
+                    self.send_response(200)
+                    self.send_header('content-type', 'image/png')
+                    self.end_headers()
+                    self.wfile.write(b)
+                except Exception as e:
+                    self.send_response(500)
+                    self.send_header('content-type', 'text')
+                    self.end_headers()
+                    self.wfile.write(("error: " + str(e)).encode('utf-8'))
+            else:
+                self.send_response(404)
+                self.send_header('content-type', 'text')
+                self.end_headers()
+                self.wfile.write('discordbot\n404 not found'.encode('utf-8'))
 
         def do_POST(self):
             res = { 'status': 0, 'type': 'none', 'message': 'none' }
@@ -49,7 +72,14 @@ class API():
     def run(self):
         asyncio.set_event_loop(self.loop)
         handler = makeAPIHandler(self.sendqueue, self.logger, self.token)
-        server = HTTPServer(('discordbot', 80), handler)
-        self.logger.debug('listen api at {0}'.format(socket.gethostbyname_ex(socket.gethostname())))
+        port = 80
+        try:
+            port = int(os.environ.get('PORT'))
+        except:
+            pass
+        if port is None:
+            port = 80
+        server = HTTPServer(('discordbot', port), handler)
+        self.logger.debug('listen api at {0}:{1}'.format(socket.gethostbyname_ex(socket.gethostname()), port))
         server.serve_forever()
 
