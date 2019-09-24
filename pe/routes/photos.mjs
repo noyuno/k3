@@ -111,7 +111,7 @@ _router.post('/photos',
       console.log('upload: ', req.files)
       res.json({
         'result': 'success',
-        'request': req });
+        'request': req.files });
     } catch (err) {
       console.error(err);
       res.status(500).json({
