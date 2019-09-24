@@ -108,7 +108,10 @@ _router.post('/photos',
   pass.authenticate('digest', {session: false}), 
   upload.single('file'), function(req, res) {
     try {
-      res.json({ 'result': 'success' });
+      res.json({
+        'result': 'success',
+        'filename': req.file.filename,
+        'size': req.file.size });
     } catch (err) {
       console.error(err);
       res.status(500).json({
