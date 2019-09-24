@@ -67,13 +67,11 @@ _app.use(function(err, req, res, next) {
 
 removeold.run_schedule(7);
 
-import SensorTable, {DBCommon} from "./routes/sensordb.mjs"
-import { fstat } from 'fs';
-DBCommon.init()
-SensorTable.createTableIfNotExists()
-
 // initialize data dir
 try { fs.mkdirSync('/data/photos') } catch (e) { console.log(e) }
-try { fs.mkdirSync('/data/sensor') } catch (e) { console.log(e) }
+
+import SensorTable, {DBCommon} from "./routes/sensordb.mjs"
+DBCommon.init()
+SensorTable.createTableIfNotExists()
 
 export const app = _app;
