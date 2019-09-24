@@ -1,3 +1,4 @@
+import fs from 'fs'
 import createError from 'http-errors';
 import express from 'express';
 import path from 'path';
@@ -67,7 +68,12 @@ _app.use(function(err, req, res, next) {
 removeold.run_schedule(7);
 
 import SensorTable, {DBCommon} from "./routes/sensordb.mjs"
+import { fstat } from 'fs';
 DBCommon.init()
 SensorTable.createTableIfNotExists()
+
+// initialize data dir
+try { fs.mkdirSync('/data/photos') } catch (e) { console.log(e) }
+try { fs.mkdirSync('/data/sensor') } catch (e) { console.log(e) }
 
 export const app = _app;
