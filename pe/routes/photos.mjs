@@ -110,8 +110,7 @@ _router.post('/photos',
     try {
       res.json({
         'result': 'success',
-        'filename': req.file.filename,
-        'size': req.file.size });
+        'files': req.files });
     } catch (err) {
       console.error(err);
       res.status(500).json({
