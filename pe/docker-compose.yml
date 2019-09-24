@@ -1,0 +1,16 @@
+version: "3"
+services:
+                
+    pe:
+        build: .
+        restart: "on-failure:5"
+        ports:
+            - "3000:3000"
+        environment:
+            DISCORDBOT: discordbot
+            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+            PE_USERNAME: "${PE_USERNAME}"
+            PE_PASSWORD: "${PE_PASSWORD}"
+        volumes:
+            - C:\Users\noyuno\Desktop\tmp:/data
+            - .:/opt/pe

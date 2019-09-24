@@ -410,4 +410,4 @@ services:
             PE_USERNAME: "${PE_USERNAME}"
             PE_PASSWORD: "${PE_PASSWORD}"
         volumes:
-            - ./tmp/pe:/data/photos
+            - ./tmp/pe:/data
