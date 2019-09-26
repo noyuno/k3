@@ -1,0 +1,67 @@
+extends layout
+
+block content
+  #header
+    a(href='/').title PE /
+    a(href='#').title= title
+
+  #link
+    a(href="/photos") Camera photos
+    a(href="/sensor") Sensor report
+
+  #main
+    table#maintable
+      tr#maintable-head
+        each name in colnames
+          td #{name}
+
+  script.
+
+    /*
+    const inittable = () => {
+      var tr = $('<tr>').attr('id', 'maintable-header').appendTo('#maintable')
+      for (var row of colnames) {
+        $('<td>').text(row[col]).appendTo(tr)
+      }
+    }
+    */
+
+    const init = () => {
+      const ws = new WebSocket('ws://localhost:3000/sensor/ws')
+      ws.addEventListener('open', (e) => {
+        console.log('websocket: open')
+      })
+      ws.addEventListener('message', (e) => {
+        console.log('received message: ', e.data)
+        addrows(JSON.parse(e.data))
+      })
+      ws.addEventListener('close', (e) => {
+        console.log('websocket: close')
+      })
+      ws.addEventListener('error', (e) => {
+        console.log('websocket: error: ', e.data)
+      })
+    }
+
+    const addrows = (data) => {
+      for (var row of data) {
+        var tr = $('<tr>').insertAfter('#maintable-head')
+        for (var col of colnames) {
+          $('<td>').text(row[col]).appendTo(tr)
+        }
+      }
+    }
+
+    const get = (page) => {
+      $.ajax({
+        type: 'GET',
+        url: '/sensor/data?p=' + page,
+        dataType: 'json',
+        success: (data, dataType) => {
+          addrows(data.data)
+        }
+      })
+    }
+
+    window.onload = init
+

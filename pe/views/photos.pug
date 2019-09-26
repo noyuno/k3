@@ -17,8 +17,8 @@ block content
     each f in files
       .item
         .list-caption= f.match(/(.*)(?:\.([^.]+$))/)[1]
-        a.galleryitem(href="/photos/#{directory}/#{f}", target='_blank')
-          img.list-img(src="/photos/#{directory}/#{f}")
+        a.galleryitem(href="/photos/" + directory + "/" + f, target='_blank')
+          img.list-img(src="/photos/" + directory + "/" + f)
 
   script.
     const changeDir = () => {
@@ -33,7 +33,7 @@ block content
         url: '/photos/' + date,
         dataType: 'json',
         success: (data, dataType) => {
-          var clone = $('#list').empty();
+          $('#list').empty();
           
           data.files.forEach( (f) => {
             const src = '/photos/' + data.directory + '/' + f;

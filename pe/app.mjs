@@ -7,6 +7,7 @@ const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 
+import {router as indexRouter} from './routes/index.mjs'
 import {router as photosRouter} from './routes/photos.mjs'
 import {router as sensorRouter} from './routes/sensor.mjs'
 import removeold from './removeold.js';
@@ -34,7 +35,7 @@ var _app = express();
 
 // view engine setup
 _app.set('views', path.join(__dirname, 'views'));
-_app.set('view engine', 'jade');
+_app.set('view engine', 'pug');
 
 _app.use(logger('dev'));
 _app.use(express.json());
@@ -42,6 +43,7 @@ _app.use(express.urlencoded({ extended: false }));
 _app.use(cookieParser());
 _app.use(express.static(path.join(__dirname, 'public')));
 
+_app.use('/', indexRouter);
 _app.use('/', photosRouter);
 _app.use('/', sensorRouter);
 //app.use('/users', usersRouter);
@@ -73,5 +75,10 @@ try { fs.mkdirSync('/data/photos') } catch (e) { console.log(e) }
 import SensorTable, {DBCommon} from "./routes/sensordb.mjs"
 DBCommon.init()
 SensorTable.createTableIfNotExists()
+
+// websocket
+_app.InitWebSocket = (server) => {
+  sensorRouter.InitWebSocket(server)
+}
 
 export const app = _app;
