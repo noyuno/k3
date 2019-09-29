@@ -3,7 +3,7 @@ import fs from 'fs';
 
 const imagespath = '/data/photos'
 
-var storage = multer.diskStorage({
+var _storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const dir = imagespath + "/" + file.originalname.split("-")[0];
     try { fs.mkdirSync(dir) } catch { }
@@ -15,4 +15,4 @@ var storage = multer.diskStorage({
     cb(null, file.originalname)
   }
 })
-export const upload = multer({ storage: storage })
+export const upload = multer({ storage: _storage })

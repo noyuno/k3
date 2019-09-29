@@ -54,7 +54,7 @@ _router.get('/photos',
 // return files
 _router.get('/photos/:directory',
   pass.authenticate('digest', {session: false}), 
-  function(req, res, next) {
+  (req, res, next) => {
     try {
       var files = fs.readdirSync(imagespath + "/" + req.params.directory);
       var filelist = files.filter(function(file){
@@ -78,7 +78,7 @@ _router.get('/photos/:directory',
 // show a image
 _router.get('/photos/:directory/:name',
   pass.authenticate('digest', {session: false}), 
-  function(req, res, next) {
+  (req, res, next) => {
     try {
       var options = {
         root: imagespath + "/" + req.params.directory,
@@ -106,7 +106,8 @@ _router.get('/photos/:directory/:name',
 // upload a image
 _router.post('/photos', 
   pass.authenticate('digest', {session: false}), 
-  upload.single('file'), function(req, res) {
+  upload.single('file'), 
+  (req, res) => {
     try {
       res.json({ 'result': 'success' });
     } catch (err) {
