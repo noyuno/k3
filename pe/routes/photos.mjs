@@ -107,7 +107,14 @@ _router.get('/photos/:directory/:name',
 // upload a image
 _router.post('/photos', 
   pass.authenticate('digest', {session: false}), 
-  multer({ storage: photoStorage }).single('file'), 
+  multer({ storage: photoStorage }).single('file')(req, res, (err) => {
+    if (err) {
+      res.status(500).json({
+        'result': 'error',
+        'error': err
+      })
+    }
+  }), 
   (req, res) => {
     try {
       res.json({ 'result': 'success' });
