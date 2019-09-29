@@ -7,7 +7,8 @@ var _router = express.Router();
 
 const imagespath = '/data/photos'
 
-import {upload} from './upload.mjs';
+import multer from 'multer'
+import {photoStorage} from './photoStorage.mjs';
 import {pass} from './passport-digest.mjs';
 
 // return directories and today files
@@ -106,7 +107,7 @@ _router.get('/photos/:directory/:name',
 // upload a image
 _router.post('/photos', 
   pass.authenticate('digest', {session: false}), 
-  upload.single('file'), 
+  multer({ storage: photoStorage }).single('file'), 
   (req, res) => {
     try {
       res.json({ 'result': 'success' });

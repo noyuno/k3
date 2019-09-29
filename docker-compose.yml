@@ -404,6 +404,8 @@ services:
         restart: "on-failure:5"
         expose:
             - "3000"
+        links:
+            - discordbot
         environment:
             DISCORDBOT: discordbot
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
