@@ -35,7 +35,9 @@ block content
     var data_structure = null
 
     const init = () => {
-      ws = new WebSocket('ws://' + location.host + '/sensor/ws')
+      const u = location.host + '/sensor/ws'
+      const url = (location.protocol == 'http:') ? ('ws://' + u) : ('wss://' + u)
+      ws = new WebSocket(url)
       ws.addEventListener('open', (e) => {
         console.log('websocket: open')
         ws.send(JSON.stringify({ status: 'list' }))
