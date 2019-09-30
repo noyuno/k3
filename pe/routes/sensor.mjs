@@ -12,92 +12,173 @@ import SensorTable, { SensorData } from "./sensordb.mjs"
 import {pass} from './passport-digest.mjs';
 
 var wss = null
-_router.InitWebSocket = async (server) => {
+_router.InitWebSocket = (server) => {
   wss = new WebSocket.Server({ server: server, path: '/sensor/ws' })
   wss.on('connection', (ws, req) => {
-    //const id = crypto.randomBytes(16).toString('base64').substring(0, 16)
     console.log('websocket: connected')
-    const page = 1
-    const limit = 500
-    const start = (page - 1) * limit
-    SensorTable.list(start, limit).then((sensordata) => {
-      console.log('sensordata', sensordata)
-      //ws.send(JSON.stringify({result: 'test'}))
-      ws.send(JSON.stringify({
-        result: 'latest',
-        data: sensordata
-      }))
+
+    ws.on('message', async (data) => {
+      try {
+        //const id = crypto.randomBytes(16).toString('base64').substring(0, 16)
+        data = JSON.parse(data)
+        console.log('websocket: got message', data)
+
+        if (data.status == 'request') {
+          if (!data.page || !data.limit || !data.host) {
+            const e = 'parameter must set page, limit, host'
+            throw e
+          }
+          const start = (data.page - 1) * data.limit
+          var sensordata = await SensorTable.list(start, data.limit, data.host)
+          console.log('sensordata: ', sensordata)
+          var count = (await SensorTable.count(data.host))[0]
+          console.log('count: ', count)
+          //ws.send(JSON.stringify({status: 'test'}))
+          ws.send(JSON.stringify({
+            status: 'success',
+            data: sensordata,
+            page: data.page,
+            limit: data.limit,
+            host: data.host,
+            count: count,
+            start: start
+          }))
+        } else if (data.status == 'list') {
+          var data = {
+            default_host: 'pe',
+            hosts: [{
+              name: 'pe', text: 'pe',
+              default_col: 'environment',
+              cols: [
+                {
+                  name: 'all', text: 'すべて',
+                  data: [
+                    { name: 'time', text: '時刻' },
+                    { name: 'temperature', text: '気温' },
+                    { name: 'pressure', text: '気圧' },
+                    { name: 'humidity', text: '湿度' },
+                    { name: 'illuminance', text: '照度' },
+                    { name: 'battery_level', text: 'バッテリレベル' },
+                    { name: 'battery_supply', text: 'バッテリ供給' },
+                    { name: 'memory_usage', text: 'バッテリ使用率' },
+                    { name: 'cpu_usage', text: 'CPU使用率' }, 
+                    { name: 'disk_usage', text: 'ディスク使用率' },
+                    { name: 'stopping_container', text: '停止中のコンテナ' },
+                    { name: 'network_available', text: 'ネットワーク接続' }
+                  ]
+                },
+                {
+                  name: 'environment', text: '環境',
+                  data: [
+                    { name: 'time', text: '時刻' },
+                    { name: 'temperature', text: '気温' },
+                    { name: 'pressure', text: '気圧' },
+                    { name: 'humidity', text: '湿度' },
+                    { name: 'illuminance', text: '照度' },
+                  ]
+                }
+              ],
+              commands: [
+                { name: 'air_conditioner_dehumidification', text: 'エアコン除湿' },
+                { name: 'air_conditioner_off', text: 'エアコン停止' },
+                { name: 'illumination_on', text: '電灯点灯' },
+                { name: 'illumination_off', text: '電灯消灯' },
+                { name: 'camera', text: '撮影' }
+              ]
+            }
+            ]
+          }
+          ws.send(JSON.stringify({
+            status: 'list',
+            data: data
+          }))
+          
+        } else if (data.status == 'command') {
+          throw 'command has not implemented yet'
+        } else {
+          throw "this mode has not implemented: " + data.mode
+        }
+      } catch (err) {
+        console.error('websocket error: ', err)
+        ws.send(JSON.stringify({
+          'status': 'error',
+          'error': err
+        }))
+      }
     })
   })
+  console.log('websocket: initialized')
 }
 
 // provide window
 _router.get('/sensor',
   async (req, res, next) => {
     try {
-      res.render('sensor',
-        {
-          colnames : ['time', 'host', 'temperature', 'pressure', 'humidity', 'illuminance', 'battery_level', 'battery_supply', 'memory_usage', 'cpu_usage', 'disk_usage', 'stopping_container', 'network_available']
-        });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({
-        'result': 'error',
-        'error': err
-      });
-    }
-  });
+      var mode = req.params.mode
 
-// provide data
-_router.get('/sensor/data',
-  async (req, res, next) => {
-    try {
-      const page = 1
-      const limit = 500
-      const start = (page - 1) * limit
-      var sensordata = await SensorTable.list(start, limit)
-      
-      res.json({
-        result: 'success',
-        page: page,
-        data: sensordata
-      });
+      res.render('sensor', {});
     } catch (err) {
       console.error(err);
       res.status(500).json({
-        'result': 'error',
+        'status': 'error',
         'error': err
       });
     }
   });
 
 // insert data
-_router.post('/sensor/data', 
+_router.post('/sensor', 
   pass.authenticate('digest', {session: false}), 
   async (req, res) => {
     try {
-      const sensordata = new SensorData(
-        req.body.time, req.body.host, req.body.temperature, req.body.pressure, req.body.humidity, req.body.illuminance, req.body.battery_level, req.body.battery_supply, req.body.memory_usage, req.body.cpu_usage, req.body.disk_usage, req.body.stopping_container, req.body.network_available
-      )
-      await SensorTable.save(sensordata)
-      res.json({ 'result': 'success' });
-      try {
-        wss.clients.forEach((client) => {
-          if (client !== wss) {
-            client.send({
-              result: 'update',
-              data: [ sensordata ]
-            })
-          }
-        })
-      } catch (err) {
-        // websocket error
-        console.error('websocket error: ', err)
+      if (req.body.status == 'report') {
+        const sensordata = new SensorData(
+          req.body.time, req.body.host, req.body.temperature, req.body.pressure, req.body.humidity, req.body.illuminance, req.body.battery_level, req.body.battery_supply, req.body.memory_usage, req.body.cpu_usage, req.body.disk_usage, req.body.stopping_container, req.body.network_available
+        )
+        for (d of sensordata) {
+          await SensorTable.save(d)
+        }
+        res.json({ 'status': 'success' });
+        try {
+          wss.clients.forEach((client) => {
+            if (client !== wss) {
+              client.send({
+                status: 'report',
+                data: sensordata
+              })
+            }
+          })
+        } catch (err) {
+          // websocket error
+          console.error('websocket error: ', err)
+        }
+      } else if (req.body.status == 'action') {
+        if (!(req.body.host && req.body.time && req.body.name && req.body.data)) {
+          throw 'requires action and data in json'
+        }
+        res.json({ 'status': 'success' });
+        try {
+          wss.clients.forEach((client) => {
+            if (client !== wss) {
+              client.send({
+                status: 'action',
+                time: req.body.time,
+                host: req.body.host,
+                data: req.body.data
+              })
+            }
+          })
+        } catch (err) {
+          // websocket error
+          console.error('websocket error: ', err)
+        }        
+      } else {
+        throw 'unknown status: ' + req.body.status
       }
     } catch (err) {
       console.error(err);
       res.status(500).json({
-        'result': 'error',
+        'status': 'error',
         'error': err
       });
     }

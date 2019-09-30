@@ -1,0 +1,149 @@
+* {
+  font-family: sans-serif;
+  font-size: 13px;
+  -webkit-overflow-scrolling: touch
+}
+
+#header * {
+  font-size: 15px;
+}
+body {
+  padding: 10px;
+}
+
+button, input, select, textarea {
+  border: 1px solid black;
+  margin: 3px;
+  padding: 6px 15px 4px 15px;
+}
+
+.title {
+  font-weight: bold;
+  color: black;
+  margin: 5px 0 5px 0;
+}
+
+.title-space {
+  margin-left: 20px;
+}
+
+
+a {
+  color: #00B7FF;
+}
+
+#header {
+  display: block;
+}
+
+#directories {
+  float: left;
+  padding: 5px;
+
+}
+
+.control-bar {
+  float: left;
+  width: 100%;
+  margin: 5px 0 5px 0;
+}
+
+.control {
+  float: left;
+  margin: 4px 20px 4px 0;
+}
+
+.button {
+
+  border-radius: 6px;
+}
+
+select {
+  overflow: hidden;
+  padding: 5px 15px 5px 15px;
+  border-radius: 0;
+}
+
+.item {
+  float: left;
+  padding: 5px;
+}
+
+.list-caption {
+  text-align: center;
+}
+
+.list-img {
+  width: 200px;
+}
+
+/* https://codepen.io/bashalog/pen/aYGxyQ */
+.scroll-table {
+  margin: 20px 0 0;
+  width: 100%;
+	max-width: 1000px;
+	overflow: auto;
+	background: white;
+	table {
+		table-layout: fixed;
+    border: none;
+    border-collapse: collapse;
+    min-width: 100%;
+	}
+  th,td {
+    padding: 5px;
+    border: 1px solid black;
+  }
+  thead th,
+  tfoot th, {
+    text-align: center;
+    color: #fff;
+    background: #32a138;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    &:nth-child(1) {
+      border-left: 1px solid black;
+    }
+    &:last-child {
+      border-right: 1px solid black;
+    }
+    a {
+      color: #fff;
+    }
+  }
+	tbody th {
+		width: 200px;
+    min-width: 200px;
+    a {
+      color: black;
+    }
+	}
+	td {
+		width: 70px;
+    min-width: 70px;
+    text-align: center;
+    white-space: nowrap;
+	}
+}
+
+
+@media screen and (max-width:480px){
+  /*画面幅が480pxまでの時*/
+
+  #header * {
+    font-size: 18px;
+  }
+  .list-img {
+    width: 100%;
+  }
+  .item {
+    float: none;
+  }
+
+  /* bug fix */
+  .lum-lightbox-inner img {
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+

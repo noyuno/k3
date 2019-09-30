@@ -3,7 +3,9 @@ extends layout
 block content
   #header
     a(href='/').title PE /
-    a(href='#').title= title
+    a(href='#') Photos
+    span.header-space
+    a(href='/sensor') Sensor
     select#directories(onChange="changeDir()")
       if directories.length == 0
         option(value="none")= "none"

@@ -90,12 +90,13 @@ export default class SensorTable {
     })
   }
 
-  static async list(offset, limit) {
+  static async list(offset, limit, host) {
     const db = DBCommon.get()
     const result = []
     return new Promise((resolve, reject) => {
       db.serialize(() => {
         db.all(`select * from ${sensorTableName}
+        where host = '${host}'
         order by id desc limit ${limit} offset ${offset}`,
           (err, rows) => {
             if (err) return reject(err)
@@ -107,6 +108,26 @@ export default class SensorTable {
       })
     })
   }
+
+  static async count(host) {
+    const db = DBCommon.get()
+    const result = []
+    return new Promise((resolve, reject) => {
+      db.serialize(() => {
+        db.all(`select count(*) from ${sensorTableName}
+        where host = '${host}'`,
+          (err, rows) => {
+            if (err) return reject(err)
+            rows.forEach(row => {
+              //console.log('row[\'count(*)\']: ', row['count(*)'])
+              result.push(row['count(*)'])
+              return resolve(result)
+            })
+          })
+      })
+    })
+  }
+
 
   static async delete(sensor) {
     const db = DBCommon.get()

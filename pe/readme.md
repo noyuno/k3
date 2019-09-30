@@ -1,4 +1,13 @@
+# pe
 
+## Install
+
+~~~
+npm install -g gulp-cli
+npm install
+~~~
+
+## Launch
 
 ### localhost
 
@@ -16,7 +25,7 @@ dc up pe
 curl --http1.1 -XPOST -F file=@20190907-123228.png --digest --user "a:b" https://pe.noyuno.jp/photos
 ~~~
 
-without `--http1.1`, it will return
+`curl --http2` (default) option not supported. without `--http1.1`, it will return error:
 ~~~
 curl: (92) HTTP/2 stream 1 was not closed cleanly: PROTOCOL_ERROR (err 1)
 ~~~
