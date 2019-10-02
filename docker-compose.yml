@@ -29,7 +29,7 @@ services:
                 photos.${DOMAIN} -> http://photod:80,
                 drive.${DOMAIN} -> http://owncloud:8080,
                 discord.${DOMAIN} -> http://discordbot:80,
-                pe.${DOMAIN} -> http://pe:3000/,
+                pi.${DOMAIN} -> http://pe:3000/,
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
             FORCE_RENEW: 'false'
             CLIENT_MAX_BODY_SIZE: '15g'
@@ -400,7 +400,7 @@ services:
                 max-file: "3"
                 
     pe:
-        build: pe
+        build: pe/server
         restart: "on-failure:5"
         expose:
             - "3000"

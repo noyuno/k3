@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  #header
+    .title
+      a(href='/') PE /
+      a(href='#') Sensor
+      span.title-space
+      a(href="/photos") Photos
+      span.title-space
+
+    .control-bar
+      .control
+        span host:
+        select#hosts(onChange="changeHost()")
+      .control#command_button
+      .control
+        input#new.button(type="button" onclick="page('new')", value="new")
+        input#old.button(type="button" onclick="page('old')", value="old")
+        select#pages(onChange="changePage()")
+          option(value="1") 1
+        span /
+        span#allpages 1
+        select#cols(onChange="changeCol()")
+
+  #main
+    .scroll-table
+      table#maintable
+        thead
+          tr#maintable-head
+        tbody#maintable-data
+
+  script(src="/javascripts/sensor.js")
+  

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+systemctl daemon-reload
+cat << EOF | sudo tee /etc/systemd/system/pe.service

@@ -152,9 +152,9 @@ _router.post('/sensor',
           // websocket error
           console.error('websocket error: ', err)
         }
-      } else if (req.body.status == 'action') {
+      } else if (req.body.status == 'command') {
         if (!(req.body.host && req.body.time && req.body.name && req.body.data)) {
-          throw 'requires action and data in json'
+          throw 'requires host, time, name, data in json'
         }
         res.json({ 'status': 'success' });
         try {
