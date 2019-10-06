@@ -2,6 +2,7 @@
 
 c=/opt/bin/docker-compose
 which $c 1>/dev/null 2>&1 || c=/opt/bin/dc
+$c build
 $c stop -t 4 $*
 $c rm -f $*
 $c up -d --remove-orphans --build  $*
