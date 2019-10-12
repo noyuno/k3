@@ -3,17 +3,17 @@ import strftime from 'strftime'
 import date_utils from 'date-utils';
 
 import express from 'express';
-var _router = express.Router();
+export const router = express.Router();
 
 const imagespath = '/data/photos'
 
 import multer from 'multer'
 import {photoStorage} from './photoStorage.mjs';
-import {pass} from './passport-digest.mjs';
+import {pass} from './passport-local.mjs';
 
 // return directories and today files
-_router.get('/photos',
-  pass.authenticate('digest', {session: false}), 
+router.get('/photos',
+  pass.authenticate('local'), 
   (req, res, next) => {
     try {
       var dirs = fs.readdirSync(imagespath);
@@ -53,8 +53,8 @@ _router.get('/photos',
   });
 
 // return files
-_router.get('/photos/:directory',
-  pass.authenticate('digest', {session: false}), 
+router.get('/photos/:directory',
+  pass.authenticate('local'), 
   (req, res, next) => {
     try {
       var files = fs.readdirSync(imagespath + "/" + req.params.directory);
@@ -77,8 +77,8 @@ _router.get('/photos/:directory',
   });
 
 // show a image
-_router.get('/photos/:directory/:name',
-  pass.authenticate('digest', {session: false}), 
+router.get('/photos/:directory/:name',
+  pass.authenticate('local'), 
   (req, res, next) => {
     try {
       var options = {
@@ -105,8 +105,8 @@ _router.get('/photos/:directory/:name',
   });
 
 // upload a image
-_router.post('/photos', 
-  pass.authenticate('digest', {session: false}), 
+router.post('/photos', 
+  pass.authenticate('local'), 
   multer({ storage: photoStorage }).single('file'), 
   (req, res) => {
     try {
@@ -119,5 +119,3 @@ _router.post('/photos',
       });
     }
 });
-
-export const router = _router;

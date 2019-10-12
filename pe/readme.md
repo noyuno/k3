@@ -40,6 +40,12 @@ curl: (92) HTTP/2 stream 1 was not closed cleanly: PROTOCOL_ERROR (err 1)
 
 ## Client (Raspberry Pi Zero)
 
+### Hardware
+
+- Raspberry Pi Zero WH
+- [Indoor Corgi RPZ-IR-Sensor Rev2.0](https://www.indoorcorgielec.com/products/rpz-ir-sensor/)
+- 
+
 ### Command
 
 ~~~
@@ -71,6 +77,20 @@ sudo systemctl start pe
 |0x06-0x07 | UPS RRT_ALRT    |
 |0x08      | UPS CONFIG      |
 |0x0A      | UPS MODE        |
+
+### GPIO
+
+| GPIO     | dest | device          |
+|----------|------|-----------------|
+| 13       | out  | IR LED          |
+| 17       | out  | LED green       |
+| 18       | out  | LED yellow      |
+| 22       | out  | LED blue        |
+| 27       | out  | LED white       |
+| 4        | in   | IR receiver     |
+| 5        | in   | tact sw red     |
+| 6        | in   | tact sw black   |
+| 23       | in   | HC-SR505        |
 
 ### LED
 

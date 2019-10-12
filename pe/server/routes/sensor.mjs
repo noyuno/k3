@@ -3,16 +3,16 @@ import 'strftime'
 import 'date-utils';
 
 import express from 'express';
-var _router = express.Router();
+export const router = express.Router();
 
 import WebSocket from 'ws'
 import crypto from 'crypto'
 
 import SensorTable, { SensorData } from "./sensordb.mjs"
-import {pass} from './passport-digest.mjs';
+//import {pass} from './passport-local.mjs';
 
 var wss = null
-_router.InitWebSocket = (server) => {
+router.InitWebSocket = (server) => {
   wss = new WebSocket.Server({ server: server, path: '/sensor/ws' })
   wss.on('connection', (ws, req) => {
     console.log('websocket: connected')
@@ -111,7 +111,8 @@ _router.InitWebSocket = (server) => {
 }
 
 // provide window
-_router.get('/sensor',
+router.get('/sensor',
+  //pass.authenticate('local'), 
   async (req, res, next) => {
     try {
       var mode = req.params.mode
@@ -124,11 +125,12 @@ _router.get('/sensor',
         'error': err
       });
     }
-  });
+  }
+)
 
 // insert data
-_router.post('/sensor', 
-  pass.authenticate('digest', {session: false}), 
+router.post('/sensor', 
+  //pass.authenticate('local'), 
   async (req, res) => {
     try {
       if (req.body.status == 'report') {
@@ -182,7 +184,7 @@ _router.post('/sensor',
         'error': err
       });
     }
-  });
+  }
+)
 
 
-export const router = _router;

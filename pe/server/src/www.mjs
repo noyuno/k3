@@ -1,15 +1,20 @@
 #!/usr/bin/env node
 
-if (!process.env.PE_USERNAME || !process.env.PE_PASSWORD) {
-  console.error("environment variable PE_USERNAME, PE_PASSWORD missing");
+if (!process.env.PE_TOKEN) {
+  console.error("environment variable PE_TOKEN missing");
   process.exit(1);
 }
+
+if (process.env.LOCAL) {
+  console.log('running on LOCAL mode')
+}
+console.log('redis address: ', process.env.REDIS)
 
 /**
  * Module dependencies.
  */
 
-import {app} from '../app.mjs'
+import {app} from './app.mjs'
 import _debug from 'debug'
 var debug = _debug('camera:server')
 import http from 'http'
@@ -95,5 +100,5 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  console.log('Listening on ' + bind);
 }

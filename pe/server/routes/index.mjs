@@ -1,6 +1,13 @@
 import express from 'express';
-var _router = express.Router();
-_router.get('/', (req, res) => {
-    res.redirect('/sensor');
-});
-export const router = _router;
+export const router = express.Router();
+router.get('/',
+  (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+    res.redirect('/login')
+  },
+  (req, res, next) => {
+    res.redirect('/sensor')
+  }
+)

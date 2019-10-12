@@ -3,6 +3,7 @@ import shutil
 import sys
 import os
 import threading
+import json
 
 import util
 
@@ -55,6 +56,9 @@ class Monitoring():
                     self.running_last_period[k] = v
                 if count > 0:
                     self.sendqueue.put({ 'message': '{0} {1} が停止しています'.format(util.emoji('bad'), text) })
+        except json.JSONDecodeError as e:
+            self.logger.exception('dockerps()', stack_info=True)
+            self.sendqueue.put({'message': 'cadvisorでエラーが発生しました({})'.format(e.__class__.__name__)})
         except Exception as e:
             msg = 'dockerps()'
             self.logger.exception(msg, stack_info=True)

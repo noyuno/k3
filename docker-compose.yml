@@ -209,7 +209,7 @@ services:
             XRAIN_LAT: ${XRAIN_LAT}
             XRAIN_LON: ${XRAIN_LON}
             XRAIN_ZOOM: ${XRAIN_ZOOM}
-            CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive-local,rclone-drive-s3,camera'
+            CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive-local,rclone-drive-s3,pe'
             MORNING: "22:00" # 07:00
             EVENING: "10:00" # 19:00
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
@@ -414,7 +414,12 @@ services:
         environment:
             DISCORDBOT: discordbot
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
-            PE_USERNAME: "${PE_USERNAME}"
-            PE_PASSWORD: "${PE_PASSWORD}"
+            PE_TOKEN: "${PE_TOKEN}"
+            NODE_ENV: production
         volumes:
             - ./tmp/pe:/data
+            - ./routes:/opt/pe/routes:ro
+            - ./public:/opt/pe/public
+            - ./sass:/opt/pe/sass:ro
+            - ./views:/opt/pe/views:ro
+            - ./src:/opt/pe/src:ro

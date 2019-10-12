@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  #header
+    .title
+      a(href='/') PE /
+      a(href='#') Login
+      span.title-space
+      a(href="/photos") Photos
+      span.title-space
+
+  #main
+    div= error
+    form(action="/login" method="post")
+      label token
+      input(type="password" name="username" value="" autofocus)
+      input(type="hidden" name="password" value="password")
+      input(type="submit" value="login")

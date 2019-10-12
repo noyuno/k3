@@ -1,6 +1,5 @@
 version: "3"
 services:
-                
     pe:
         build: .
         restart: "on-failure:5"
@@ -9,8 +8,12 @@ services:
         environment:
             DISCORDBOT: discordbot
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
-            PE_USERNAME: "${PE_USERNAME}"
-            PE_PASSWORD: "${PE_PASSWORD}"
+            PE_TOKEN: "${PE_TOKEN}"
+            NODE_ENV: development
         volumes:
-            - C:\Users\noyuno\Desktop\tmp:/data
-            - .:/opt/pe
+            - C:\Users\noyuno\Desktop\pe-tmp:/data
+            - ./routes:/opt/pe/routes:ro
+            - ./public:/opt/pe/public
+            - ./sass:/opt/pe/sass:ro
+            - ./views:/opt/pe/views:ro
+            - ./src:/opt/pe/src:ro
