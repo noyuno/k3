@@ -1,6 +1,6 @@
 
 
-class IR():
+class Camera():
   def __init__(self):
     pass
   

@@ -31,11 +31,11 @@ const updateCommand = (activeHost) => {
 }
 
 
-const runCommand = (name) => {
+const runCommand = (e) => {
     websocket.send({
       type: 'command',
       host: $('#hosts').val(),
-      name: name,
+      name: e.data,
       data: {}
     })
 }

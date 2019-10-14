@@ -19,7 +19,7 @@ const init = () => {
       query()
     },
   })
-  
+
   $('#cols').on('change', () => {
     updateMode($('#cols').val())
     query()    
@@ -82,8 +82,8 @@ const updateMode = (active_col_name) => {
         }
       }
       if (t && h) {
-        $('<td>').text('不快指数').val('discomfort_index').appendTo(tr)
-        $('<td>').text('体感温度').val('apparent_temperature').appendTo(tr)
+        $('<td>').text('(不快指数)').val('discomfort_index').appendTo(tr)
+        $('<td>').text('(体感温度)').val('apparent_temperature').appendTo(tr)
       }
     }
   }

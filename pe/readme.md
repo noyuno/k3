@@ -20,16 +20,17 @@ docker-compose build
 docker-compose up
 $ curl -c cookie -XPOST -d 'token=token' -d 'password=aa' 'localhost:3000/login'
 Found. Redirecting to /
-$ curl --http1.1 -b cookie -XPOST -f -F file=@pe-20191013-194645.png 'localhost:3000/photos'
+$ curl -b cookie -XPOST -f -F file=@pe-20191013-194645.png 'localhost:3000/photos'
 {"result":"success"}
 ~~~
 
 #### docker-compose with HTTPS-Portal
 
 ~~~
-dc build pe
-dc up pe
-curl --http1.1 -XPOST -F file=@20190907-123228.png --digest --user "a:b" https://pe.noyuno.jp/photos
+docker-compose build
+docker-compose up
+curl -c cookie -XPOST -d 'token=token' -d 'password=aa' 'https://pe.noyuno.jp/login'
+curl --http1.1 -b cookie -XPOST -F file=@20190907-123228.png --digest --user "a:b" https://pe.noyuno.jp/photos
 ~~~
 
 `curl --http2` (default) option not supported. without `--http1.1`, it will return error:
@@ -41,32 +42,34 @@ curl: (92) HTTP/2 stream 1 was not closed cleanly: PROTOCOL_ERROR (err 1)
 
 `curl -T` option not supported.
 
+### Environment Variables
+
+- DISCORDBOT: discordbot
+- DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+- PE_TOKEN: "${PE_TOKEN}"
+- NODE_ENV: development
+
 ## Client (Raspberry Pi Zero)
 
 ### Hardware
 
 - Raspberry Pi Zero WH
 - [Indoor Corgi RPZ-IR-Sensor Rev2.0](https://www.indoorcorgielec.com/products/rpz-ir-sensor/)
-- 
+- UPS-Lite
+- Pyroelectric sensor (HC-SR505)
+- Buzzer
 
 ### Command
 
 ~~~
-python3 main.py
-~~~
-
-### Systemd
-
-~~~
-sudo ./bin/systemd-install
-sudo systemctl start pe
+docker-compose build
+docker-compose up
 ~~~
 
 ### Environment Variables
 
-- `DISCORDBOT_TOKEN`
-- `PE_USERNAME`
-- `PE_PASSWORD`
+- PE_TOKEN
+- SIMULATION
 
 ### i2c
 
@@ -89,6 +92,7 @@ sudo systemctl start pe
 | 17       | out  | LED green       |
 | 18       | out  | LED yellow      |
 | 22       | out  | LED blue        |
+| 25       | out  | Buzzer          |
 | 27       | out  | LED white       |
 | 4        | in   | IR receiver     |
 | 5        | in   | tact sw red     |
