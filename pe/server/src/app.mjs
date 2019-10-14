@@ -1,13 +1,14 @@
 import fs from 'fs'
 import createError from 'http-errors';
 import express from 'express';
+import expressSession from 'express-session'
 import path from 'path';
 import url from 'url'
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import nanoid from 'nanoid'
 import connectFlash from 'connect-flash'
+import nanoid from 'nanoid'
 
 import {router as indexRouter} from '../routes/index.mjs'
 import {router as photosRouter} from '../routes/photos.mjs'
@@ -15,6 +16,11 @@ import {router as sensorRouter} from '../routes/sensor.mjs'
 import SensorTable, {DBCommon} from "../routes/sensordb.mjs"
 import {router as loginRouter} from '../routes/login.mjs'
 import removeold from './removeold.js';
+import passport from './passport-local.mjs';
+import {router as wsapiRouter} from '../routes/wsapi.mjs'
+
+//import session from 'express-session'
+//import nanoid from 'nanoid'
 
 export const app = express();
 
@@ -47,7 +53,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
-//app.use(connectFlash)
+
+/*app.use(session({
+  secret: nanoid(),
+  cookie: {
+    maxAge: 60000
+  }
+}
+))*/
+const session = expressSession({
+    secret: nanoid(),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 30
+    }
+  }
+)
+app.use(session)
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(connectFlash())
 
 app.use('/', indexRouter);
 app.use('/', photosRouter);
@@ -84,5 +108,5 @@ SensorTable.createTableIfNotExists()
 
 // websocket
 app.InitWebSocket = (server) => {
-  sensorRouter.InitWebSocket(server)
+  wsapiRouter.InitWebSocket(server, session)
 }

@@ -15,10 +15,13 @@ npm install
 
 #### developing on the localhost
 
-~~~
-docker build . -t pe
-docker run -it --rm -v C:\Users\noyuno\Desktop\tmp:/data  -v public:/opt/pe/public -v views:/opt/pe/views -p "3000:3000" -e PE_USERNAME=a -e PE_PASSWORD=b pe
-curl --http1.1 -XPOST -F file=@20190907-123228.png --digest --user "a:b" http://localhost:3000/photos
+~~~sh
+docker-compose build
+docker-compose up
+$ curl -c cookie -XPOST -d 'token=token' -d 'password=aa' 'localhost:3000/login'
+Found. Redirecting to /
+$ curl --http1.1 -b cookie -XPOST -f -F file=@pe-20191013-194645.png 'localhost:3000/photos'
+{"result":"success"}
 ~~~
 
 #### docker-compose with HTTPS-Portal

@@ -1,8 +1,9 @@
 import passport from 'passport'
 import localStrategy from 'passport-local'
 passport.use(new localStrategy(
-  (username, password, done) => {
-    if (!!username && username == process.env.PE_TOKEN) {
+  { usernameField: 'token', passwordField: 'password' },
+  (token, password, done) => {
+    if (!!token && token == process.env.PE_TOKEN) {
       console.log('login success')
       return done(null, process.env.PE_TOKEN, { message: 'login success' })
     } else {
@@ -12,4 +13,11 @@ passport.use(new localStrategy(
   }
 ));
 
-export const pass = passport
+passport.serializeUser((user, done) => {
+  done(null, user)
+})
+passport.deserializeUser((user, done) => {
+  done(null, user)
+})
+
+export default passport

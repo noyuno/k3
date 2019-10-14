@@ -12,16 +12,16 @@ block content
     .control-bar
       .control
         span host:
-        select#hosts(onChange="changeHost()")
-      .control#command_button
+        select#hosts
       .control
-        input#new.button(type="button" onclick="page('new')", value="new")
-        input#old.button(type="button" onclick="page('old')", value="old")
-        select#pages(onChange="changePage()")
+        input#new.button(type="button" value="new")
+        input#old.button(type="button" value="old")
+        select#pages
           option(value="1") 1
         span /
         span#allpages 1
-        select#cols(onChange="changeCol()")
+        select#cols
+      .control#command_button
 
   #main
     .scroll-table
@@ -30,5 +30,5 @@ block content
           tr#maintable-head
         tbody#maintable-data
 
-  script(src="/javascripts/sensor.js")
+  script(src="/javascripts/sensor.js" type="module")
   

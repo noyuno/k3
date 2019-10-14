@@ -2,94 +2,23 @@ extends layout
 
 block content
   #header
-    a(href='/').title PE /
-    a(href='#') Photos
-    span.header-space
-    a(href='/sensor') Sensor
-    select#directories(onChange="changeDir()")
-      if directories.length == 0
-        option(value="none")= "none"
-      else
-        each d in directories
-          option(value=d)= d
-    .control
-      input.button(type="button" onclick="newDate()", value="new")
-      input.button(type="button" onclick="oldDate()", value="old")
+    .title
+      a(href='/') PE /
+      a(href='#') Photos
+      span.title-space
+      a(href='/sensor') Sensor
+      span.title-space
+
+    .control-bar
+      .control
+        span host:
+        select#hosts
+      .control
+        input.button#new-date(type="button" value="new")
+        input.button#old-date(type="button" value="old")
+        select#dates
+      .control#command_button
+
   #list
-    each f in files
-      .item
-        .list-caption= f.match(/(.*)(?:\.([^.]+$))/)[1]
-        a.galleryitem(href="/photos/" + directory + "/" + f, target='_blank')
-          img.list-img(src="/photos/" + directory + "/" + f)
 
-  script.
-    const changeDir = () => {
-      const date = $('#directories option:selected').text();
-      window.location.hash = date;
-      moveDate(date);
-    };
-
-    const moveDate = (date) => {
-      $.ajax({
-        type: 'GET',
-        url: '/photos/' + date,
-        dataType: 'json',
-        success: (data, dataType) => {
-          $('#list').empty();
-          
-          data.files.forEach( (f) => {
-            const src = '/photos/' + data.directory + '/' + f;
-            var img = $('<img>').attr({
-              src: src,
-              class: 'list-img'});
-            var a = $('<a>').attr({
-              href: src,
-              target: '_blank',
-              class: 'galleryitem' }).append(img);
-            var caption = $('<div>').attr({ class: 'list-caption'}).text(f.match(/(.*)(?:\.([^.]+$))/)[1]);
-            var item = $('<div>').attr({class: 'item'}).append(caption).append(a);
-            $('#list').append(item);
-          });
-          initializeGallery();
-        }
-      });
-    };
-    
-    const newDate = () => {
-      const current = $('#directories').prop('selectedIndex');
-      if (current > 0) {
-        $('#directories').prop('selectedIndex', current - 1);
-        changeDir();
-      }
-    };
-
-    const oldDate = () => {
-      const current = $('#directories').prop('selectedIndex');
-      const length = $('#directories').children().length;
-      if (current < length - 1) {
-        $('#directories').prop('selectedIndex', current + 1);
-        changeDir();
-      }
-    };
-
-    const initializeGallery = () => {
-      console.log("a");
-      document.querySelectorAll('.galleryitem').forEach((f)=>{
-          new Luminous(f, { arrowNavigation: true });
-        });
-    };
-
-    window.onload = () => {
-      if (window.location.hash) {
-        console.log(window.location.hash);
-        const date = window.location.hash.replace('#', '');
-        $('#directories').val(date)
-        moveDate(date);
-      } else {
-        initializeGallery();
-      }
-      setInterval(() => {
-        const date = $('#directories option:selected').text();
-        moveDate(date);
-      }, 1000 * 60);
-    }
+  script(src="/javascripts/photos.js" type="module")

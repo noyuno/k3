@@ -6,13 +6,33 @@ block content
       a(href='/') PE /
       a(href='#') Login
       span.title-space
+      a(href="/sensor") Sensor
       a(href="/photos") Photos
       span.title-space
 
   #main
     div= error
-    form(action="/login" method="post")
+    div= info
+
+    form#login-form(action='/login' method="post")
       label token
-      input(type="password" name="username" value="" autofocus)
+      input(type="password" name="token" value="" autofocus)
       input(type="hidden" name="password" value="password")
       input(type="submit" value="login")
+
+  script.
+    window.onload = () => {
+      const params = () => {
+        var ret = new Object, params;
+        var _p = window.location.search.substring(1).split('&');
+        for(var i = 0; i <_p.length; i++) {
+          params = _p[i].split('=');
+          ret[params[0]] = params[1];
+        }
+        return ret;
+      }
+      var action = '/login'
+      if (params()['redirect'])
+        $('#login-form').attr('action', '/login?redirect=' + params()['redirect'])
+    }
+    

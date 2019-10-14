@@ -3,11 +3,9 @@ export const router = express.Router();
 router.get('/',
   (req, res, next) => {
     if (req.isAuthenticated()) {
-        return next()
+      res.render('index', { info: 'Already logged in' })
+    } else {
+      res.render('index', { info: 'Not logged in' })
     }
-    res.redirect('/login')
-  },
-  (req, res, next) => {
-    res.redirect('/sensor')
   }
 )
