@@ -1,7 +1,6 @@
 import os
 import json
 import websocket
-import thread
 import time
 
 class WebSocketUtil():

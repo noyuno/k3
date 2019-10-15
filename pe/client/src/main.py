@@ -8,6 +8,8 @@ import time
 import logging
 from datetime import datetime
 
+import requestsutil
+import websocketutil
 import report
 import util
 import camera
@@ -67,7 +69,9 @@ def main(logger):
     if os.environ.get('DEV'):
         logger.info('running on DEV mode')
 
-    rep = report.Report()
+    req = requestsutil.RequestsUtil(logger)
+    ws = websocketutil.WebSocketUtil(logger, req)
+    rep = report.Report(logger, ws)
     cam = camera.Camera()
     le = led.Led()
     sen = sensor.Sensor()
@@ -77,6 +81,6 @@ def main(logger):
 
 if __name__ == "__main__":
     logger, starttime = initlogger()
-    logger.info('started discordbot at {0}'.format(starttime))
+    logger.info('started pec at {0}'.format(starttime))
     main(logger)
 

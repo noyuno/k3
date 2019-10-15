@@ -69,7 +69,7 @@ docker-compose up
 ### Environment Variables
 
 - PE_TOKEN
-- SIMULATION
+- DEV
 
 ### i2c
 

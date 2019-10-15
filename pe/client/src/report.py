@@ -5,7 +5,8 @@ from datetime import datetime
 
 class Report():
   def __init__(self, logger, ws):
-    pass
+    self.logger = logger
+    self.ws = ws
           
   def report(self):
     server = 'https://pe.noyuno.jp/sensor'
