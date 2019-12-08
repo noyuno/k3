@@ -272,7 +272,7 @@ services:
             GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
             GF_USERS_ALLOW_SIGN_UP: "false"
             GF_USERS_ALLOW_ORG_CREATE: "false"
-            GF_SERVER_ROOT_URL: status.${DOMAIN}
+            GF_SERVER_ROOT_URL: https://status.${DOMAIN}
             #LETSENCRYPT_HOST: prometheus.example.com
             #LETSENCRYPT_EMAIL: hoge@example.com
         # import -> 395, 22, 893
