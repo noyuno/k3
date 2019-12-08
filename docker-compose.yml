@@ -272,7 +272,7 @@ services:
             GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
             GF_USERS_ALLOW_SIGN_UP: "false"
             GF_USERS_ALLOW_ORG_CREATE: "false"
-            VIRTUAL_HOST: ${HOST}.${DOMAIN}
+            GF_SERVER_ROOT_URL: status.${DOMAIN}
             #LETSENCRYPT_HOST: prometheus.example.com
             #LETSENCRYPT_EMAIL: hoge@example.com
         # import -> 395, 22, 893
@@ -420,8 +420,8 @@ services:
             NODE_ENV: production
         volumes:
             - ./tmp/pe:/data
-            - ./routes:/opt/pe/routes:ro
-            - ./public:/opt/pe/public
-            - ./sass:/opt/pe/sass:ro
-            - ./views:/opt/pe/views:ro
-            - ./src:/opt/pe/src:ro
+            #- ./pe/server/routes:/opt/pe/routes:ro
+            #- ./pe/server/public:/opt/pe/public
+            #- ./pe/server/sass:/opt/pe/sass:ro
+            #- ./pe/server/views:/opt/pe/views:ro
+            #- ./pe/server/src:/opt/pe/src:ro
