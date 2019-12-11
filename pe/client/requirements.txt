@@ -1,6 +1,5 @@
 websocket-client
 smbus
-schedule
 RPi.GPIO
 requests
 picamera

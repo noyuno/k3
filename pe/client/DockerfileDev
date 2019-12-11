@@ -1,0 +1,9 @@
+FROM sgtwilko/rpi-raspbian-opencv:stretch-4
+
+COPY . /opt/pec
+WORKDIR /opt/pec
+RUN apt -q update && \
+    apt -qy upgrade && \
+    apt -qy install lirc python3-pygame && \
+    pip3 -q install -r requirements-dev.txt
+CMD [ "python3", "./src/main.py" ]

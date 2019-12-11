@@ -59,11 +59,26 @@ curl: (92) HTTP/2 stream 1 was not closed cleanly: PROTOCOL_ERROR (err 1)
 - Pyroelectric sensor (HC-SR505)
 - Buzzer
 
+### Pi Settings
+
+~~~
+# Uncomment this to enable the lirc-rpi module
+dtoverlay=lirc-rpi
+dtparam=gpio_out_pin=13
+dtparam=gpio_in_pin=4
+~~~
+
 ### Command
 
 ~~~
 docker-compose build
 docker-compose up
+~~~
+
+#### Developer
+
+~~~
+docker-compose -f docker-compose-dev.yml build
 ~~~
 
 ### Environment Variables
@@ -88,7 +103,7 @@ docker-compose up
 
 | GPIO     | dest | device          |
 |----------|------|-----------------|
-| 13       | out  | IR LED          |
+| 13       | out  | IR sender       |
 | 17       | out  | LED green       |
 | 18       | out  | LED yellow      |
 | 22       | out  | LED blue        |
@@ -99,29 +114,80 @@ docker-compose up
 | 6        | in   | tact sw black   |
 | 23       | in   | HC-SR505        |
 
-### LED
+
+### Mode
 
 from the left
 
-1. green
+1. red: execute button
+0. black: select button
+
+| state | command            |
+|-------|--------------------|
+| 0000  | back               |
+| 0001  | status mode        |
+| 0010  | send ir            |
+| 0011  | record ir          |
+| 0100  | take a picture     |
+| 0101  | ping               |
+
+#### Status mode
+
+from the left
+
+button:
+
+1. red: undefined
+0. black: select mode
+
+LED:
+
+3. green
 2. yellow
-3. blue
-4. white
+1. blue
+0. white
 
-| state               | description        |
-|---------------------|--------------------|
-| green 0.5s once     | environment sensor |
-| yellow 0.5s blink   | battery error      |
-| yellow 1s blink     | network error      |
-| yellow 1.5s blink   | daemon error       |
-| blue 0.5s once      | take a picture     |
-| white 0.5s once     | send IR            |
-| white 0.2s twice    | record IR          |
+| state | state               | description        |
+|-------|---------------------|--------------------|
+| 1000  | green 0.5s once     | environment sensor |
+| 0100  | yellow 0.5s blink   | battery error      |
+| 0100  | yellow 1s blink     | network error      |
+| 0100  | yellow 1.5s blink   | daemon error       |
+| 0010  | blue 0.5s once      | take a picture     |
 
-### button
+#### IR send mode / record mode
 
 from the left
 
-1. red
-2. black
+1. red: execute button
+0. black: select button
+
+| state | command            |
+|-------|--------------------|
+| 1000  | cancel             |
+| 1010  | illumination off   |
+| 1011  | illumination on    |
+| 1100  | air conditioner off|
+| 1101  | air conditioner on |
+| 1110  | reserved           |
+| 1111  | reserved           |
+
+| state | state               | description        |
+|-------|---------------------|--------------------|
+| any   | 1 blink x 0.5s      | sending            |
+| any   | blink x 0.2s        | recording          |
+| any   | 1s                  | recorded           |
+
+In record mode
+
+1. red: complete recording
+0. black: cancel recording
+
+
+#### Photograph mode / Ping mode
+
+| state | state               | description        |
+|-------|---------------------|--------------------|
+| 1000  | green 1s once       | ok                 |
+| 0100  | yellow 1s once      | bad                |
 

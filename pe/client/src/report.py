@@ -2,9 +2,12 @@ import requests
 from bme280i2c import BME280I2C
 from tsl2572 import TSL2572
 from datetime import datetime
+import threading
+import time
 
-class Report():
+class Report(threading.Thread):
   def __init__(self, logger, ws):
+    threading.Thread.__init__(self)
     self.logger = logger
     self.ws = ws
           
@@ -36,4 +39,6 @@ class Report():
       pass
 
   def run(self):
-    pass
+    while True:
+      time.sleep(1)
+      

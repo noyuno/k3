@@ -2,9 +2,11 @@ import os
 import json
 import websocket
 import time
+import threading
 
-class WebSocketUtil():
+class WebSocketUtil(threading.Thread):
   def __init__(self, logger, req):
+    threading.Thread.__init__(self)
     self.logger = logger
     self.req = req
     self.callbacks = {}
@@ -18,7 +20,7 @@ class WebSocketUtil():
     cookies = req.cookies
 
     self.ws = websocket.WebSocketApp(self.peWSHost,
-      on_open=self.ws.on_open,
+      on_open=self.on_open,
       on_message=self.on_message,
       on_error=self.on_error,
       on_close=self.on_close,
@@ -43,3 +45,8 @@ class WebSocketUtil():
   
   def callback(self, name, cb):
     self.callbacks['name'] = cb
+
+  def run():
+    while True:
+      time.sleep(1)
+      

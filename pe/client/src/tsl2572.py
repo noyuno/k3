@@ -5,7 +5,11 @@ TSL2572 Control Module via I2C
  2018/11/15
 """
 
-import smbus
+import os
+if os.environ.get('DEV'):
+    import pygame
+else:
+    import smbus
 import time
 
 class TSL2572:

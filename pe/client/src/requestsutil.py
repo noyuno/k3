@@ -1,11 +1,14 @@
 import requests
 import os
 import json
-import thread
+import threading
 import time
 
-class RequestsUtil():
-  def __init__(self, logger):
+class RequestsUtil(threading.Thread):
+  def __init__(self, logger, name="RequestsUtil"):
+    threading.Thread.__init__(self)
+    self.name = str(name)
+    
     self.logger = logger
     if os.getenv('PEHTTPS') != "":
       self.peHost = 'https://'

@@ -8,5 +8,5 @@ services:
             PE_TOKEN: "${PE_TOKEN}"
         volumes:
             - C:\Users\noyuno\Desktop\tmp:/data
-            - .:/opt/pe-client
+            - .:/opt/pec
         privileged: "true"

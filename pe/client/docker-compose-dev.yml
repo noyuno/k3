@@ -2,11 +2,14 @@ version: "3"
 services:
                 
     pe-client:
-        build: .
-        restart: "on-failure:5"
+        build:
+            context: .
+            dockerfile: DockerfileDev
         environment:
             PE_TOKEN: "${PE_TOKEN}"
             DEV: "1"
+            DISPLAY: "10.0.75.1:0"
+            SDL_VIDEODRIVER: x11
         volumes:
             - C:\Users\noyuno\Desktop\tmp:/data
             - .:/opt/pec
