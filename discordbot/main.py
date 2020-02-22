@@ -75,13 +75,13 @@ def main(logger):
 
     httploop = asyncio.new_event_loop()
     ap = api.API(httploop, sendqueue, logger, os.environ.get('DISCORDBOT_TOKEN'))
-    threading.Thread(target=ap.run, name='api').start()
+    threading.Thread(target=ap.run, name='api', daemon=True).start()
 
     wea = weather.Weather(sendqueue, logger)
     mon = monitoring.Monitoring(sendqueue, logger)
     scheduleloop = asyncio.new_event_loop()
     sched = Scheduler(sendqueue, wea, mon, logger, scheduleloop)
-    threading.Thread(target=sched.run, name='scheduler').start()
+    threading.Thread(target=sched.run, name='scheduler', daemon=True).start()
 
     logger.debug('launch discord client')
     client = discordbot.DiscordClient(os.environ.get('DISCORD_CHANNEL_NAME'), sendqueue, wea, mon, logger)
