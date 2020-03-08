@@ -30,7 +30,8 @@ class Scheduler():
         if os.environ.get('EVENING') is not None:
             schedule.every().day.at(os.environ.get('EVENING')).do(
                 (lambda: self.sendqueue.put({ 'message': '夕ごはんの時間です' })))
-        schedule.every(5).minutes.do(self.monitoring.run, show_all=False)
+        if os.environ.get('CADVISOR') is not None and os.environ.get('CONTAINERS') is not None:
+            schedule.every(5).minutes.do(self.monitoring.run, show_all=False)
 
         while True:
             schedule.run_pending()

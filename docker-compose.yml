@@ -191,7 +191,7 @@ services:
         expose:
             - "80"
         links:
-            - cadvisor
+            #- cadvisor
             - manet
         volumes:
             - ./data/discordbot:/data/discordbot
@@ -204,12 +204,12 @@ services:
             GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
             DARK_SKY_API_KEY: ${DARK_SKY_API_KEY}
             LOCATION: ${LOCATION}
-            CADVISOR: 'cadvisor:8080'
+            #CADVISOR: 'cadvisor:8080'
             MANET: 'manet:8891'
             XRAIN_LAT: ${XRAIN_LAT}
             XRAIN_LON: ${XRAIN_LON}
             XRAIN_ZOOM: ${XRAIN_ZOOM}
-            CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive-local,rclone-drive-s3,pe'
+            #CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive-local,rclone-drive-s3,pe'
             MORNING: "22:00" # 07:00
             EVENING: "10:00" # 19:00
             DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
