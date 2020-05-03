@@ -9,9 +9,8 @@ curl -sLf $(curl -sLf https://api.github.com/repos/docker/compose/releases/lates
 sudo chmod +x /opt/bin/dc
 
 echo "Install dotfiles"
-ln -sfn ~/k2/.bash_profile ~
-ln -sfn ~/k2/.bashrc ~
-ln -sfn ~/k2/.bash_aliases ~
-ln -sfn ~/k2/.vimrc ~
+find /home/noyuno/k3 -type f | while read line ; do
+    ln -sfnv $line ~
+done
 
 echo "Finished."

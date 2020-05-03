@@ -375,7 +375,7 @@ services:
         environment:
             RCLONE_CROND_SCHEDULE: "02 00 * * 0,3" # 09:02
             RCLONE_CROND_SOURCE_PATH: "/data"
-            RCLONE_CROND_DESTINATION_PATH: "s3:k2b/google/drive"
+            RCLONE_CROND_DESTINATION_PATH: "s3:k3b/google/drive"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
             CONTAINER_NAME: "rclone-drive-s3"
             DISCORDBOT: discordbot
