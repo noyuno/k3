@@ -696,6 +696,7 @@ alias port='sudo netstat -luntp'
 which unar 1>/dev/null 2>&1 && alias unzip='unar'
 alias sy='sudo systemctl'
 which docker-compose >/dev/null 2>&1 && alias dc='docker-compose'
+which podman-compose >/dev/null 2>&1 && alias dc='podman-compose'
 
 # get docker-compose container ip
 dip () {
