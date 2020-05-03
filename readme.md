@@ -35,6 +35,8 @@ exit
 noyuno
 ~~~sh
 git clone https://github.com/noyuno/k3
+cd k3
+./bin/install
 ~~~
 
 
