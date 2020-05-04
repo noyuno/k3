@@ -37,6 +37,12 @@ noyuno
 git clone https://github.com/noyuno/k3
 cd k3
 ./bin/install
+sudo hostnamectl set-hostname k3.noyuno.jp
+~~~
+
+/etc/cloud/cloud.cfg
+~~~
+preserve_hostname: true
 ~~~
 
 
