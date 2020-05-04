@@ -112,6 +112,47 @@ if [[ -s ~/.rvm/scripts/rvm ]] ; then source ~/.rvm/scripts/rvm ; fi
 
 [ -f "$HOME/.zsh_aliases" ] && . $HOME/.zsh_aliases
 
+function dirc() {
+    cnormal="\e[32m"
+    chidden="\x1b[38;05;8m"
+    cfiles="\e[m"
+    cdirs="\e[34m"
+    ctotal="\e[m"
+    creset="\e[m"
+
+    list=$(ls -aFU1)
+    total=$(echo "$list" | wc -l)
+    files=$(echo "$list" | command grep -v /)
+    filescount=$(echo "$files" | command wc -l)
+    fileshiddencount=$(echo "$files" | command grep '^\.' | command wc -l)
+    filesnormalcount=$((filescount - fileshiddencount))
+    dirs=$(echo "$list" | command grep /)
+    dirscount=$(echo "$dirs" | command wc -l)
+    dirshiddencount=$(echo "$dirs" | command grep '^\.' | command wc -l)
+    dirsnormalcount=$((dirscount - dirshiddencount))
+    normal=$((filesnormalcount + dirsnormalcount))
+    hidden=$((fileshiddencount + dirshiddencount))
+    echo -ne "$cfiles$filescount$creset($cnormal$filesnormalcount $chidden$fileshiddencount$creset) \
+    $cdirs$dirscount$creset($cnormal$dirsnormalcount $chidden$dirshiddencount$creset) \
+    $ctotal$total$creset($cnormal$normal $chidden$hidden$creset) "
+    command ls -al . | awk '{ total += $5 }; END { printf("%dMB\n", int(total/1024/1024)) }'
+}
+
+function cdls() {
+    if [ $(ls -U1 | wc -l) -lt 50 ]; then
+        if which exa >/dev/null 2>&1; then
+            exa --color=always
+        else
+            case $OSTYPE in
+                linux*) ls --color=always ;;
+                darwin*) ls -G ;;
+            esac
+        fi
+    fi
+    if [ "$TMUX" ]; then
+        tmux refresh-client -S
+    fi
+}
 function cd() {
     builtin cd $@ && dirc && cdls
 }
