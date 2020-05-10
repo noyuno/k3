@@ -1,10 +1,10 @@
 # k3
 
-## Overview
+## 1. 構成
 
 ![k3](https://raw.githubusercontent.com/noyuno/k3/master/k3.png)
 
-## Install
+## 2. インストール
 
 
 In Windows,
@@ -17,8 +17,9 @@ ssh -i .\.ssh\kagoya-ログイン用認証キー_20200429200002.key root@k3.noyu
 root
 ~~~sh
 dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+sudo yum -y install elrepo-release epel-release
 dnf -y install python3-pip tmux git zsh tree htop podman-docker nano
-pip3 install podman-compose
+pip3 install podman-compose kmod-wireguard wireguard-tools qrencode
 
 useradd noyuno -Gnoyuno,wheel -s /bin/zsh -p xxxxxxxx
 mkdir /home/noyuno/.ssh
@@ -36,6 +37,7 @@ noyuno
 ~~~sh
 git clone https://github.com/noyuno/k3
 cd k3
+
 ./bin/install
 sudo hostnamectl set-hostname k3.noyuno.jp
 ~~~
@@ -45,56 +47,124 @@ sudo hostnamectl set-hostname k3.noyuno.jp
 preserve_hostname: true
 ~~~
 
+## 3. VPN(WireGuard)
 
-
-4. `ip a`. Note interface name
-5. `sudo vi /etc/systemd/network/static.network`
+### 3.1. サーバ側(***k3***)
 
 ~~~
-[Match]
-Name=eth0
-[Network]
-Address=xxx.xxx.xxx.xxx
-Gateway=xxx.xxx.xxx.xxx
-DNS=8.8.8.8
+sudo yum -y install 
+sudo mkdir -p /etc/wireguard
+cd /etc/wireguard
+sudo sh -c 'umask 077; touch wg0.conf'
+sudo sh -c 'umask 077; wg genkey | tee privatekey | wg pubkey > publickey; chmod 644 publickey'
+
+sudo sh -c 'umask 077; touch client.conf'
+sudo sh -c 'umask 077; wg genkey | tee client-privatekey | wg pubkey > client-publickey; chmod 644 client-publickey'
 ~~~
 
-6. `sudo systemctl restart systemd-networkd`
-7. `curl -sL "https://raw.githubusercontent.com/noyuno/k3/master/cloud-config.yml" >cloud-config.yml`
-8. Change IP address by `vi cloud-config.yml`
-9. `sudo gdisk /dev/vda`, `p`
-10. `sudo coreos-install -d /dev/vda -C stable -c cloud-config.yml`
+/etc/wireguard/wg0.conf
+~~~
+[Interface]
+Address = 192.168.5.1
+DNS = 8.8.8.8
+ListenPort = 51820
+PrivateKey = (k3 private key)
 
-If forget changing IP address, edit `/var/lib/coreos-install/user_data`
+[Peer]
+PublicKey = (m1 public key)
+AllowedIPs = 192.168.5.2/32, 192.168.100.0/24
 
-11. `reboot`
+[Peer]
+PublicKey = (client public key)
+AllowedIPs = 192.168.5.3/32
+~~~
 
-In Linux client,
+~~~
+sudo sysctl net.ipv4.ip_forward=1
+sudo firewall-cmd --permanent --add-port=51820/udp --zone=public
+sudo firewall-cmd --permanent --zone=public --add-masquerade
+sudo firewall-cmd --permanent --add-interface=wg0 --zone=internal
+sudo firewall-cmd --permanent --zone=internal --add-masquerade
+sudo systemctl enable wg-quick@wg0
+sudo systemctl start wg-quick@wg0
+~~~
 
-12. `ssh xxx.xxx.xxx.xxx` (If refused connection, type `sudo systemctl start sshd` in VNC)
-13. Set up `docker-compose`
+### 3.2. クライアント側(***m1***)
+
+~~~
+sudo sh -c 'umask 077; touch m1.conf'
+sudo sh -c 'umask 077; wg genkey | tee m1-privatekey | wg pubkey > m1-publickey; chmod 644 m1-publickey'
+~~~
+
+/etc/wireguard/m1.conf
+~~~
+[Interface]
+PrivateKey = (m1 private key)
+Address = 192.168.5.2
+
+[Peer]
+PublicKey = (k3 public key)
+Endpoint = k3.noyuno.jp:51820
+AllowedIPs = 192.168.5.0/24
+~~~
+
+### 3.3. クライアント側(***端末***)
+
+***k3***
+
+~~~
+sudo sh -c 'umask 077; touch client.conf'
+sudo sh -c 'umask 077; wg genkey | tee client-privatekey | wg pubkey > client-publickey; chmod 644 client-publickey'
+~~~
+
+/etc/wireguard/client.conf
+~~~
+[Interface]
+PrivateKey = (client private key)
+Address = 192.168.5.3
+
+[Peer]
+PublicKey = (k3 public key)
+Endpoint = k3.noyuno.jp:51820
+AllowedIPs = 192.168.5.0/24, 192.168.100.0/24
+~~~
+
+~~~
+sudo cat client.conf | qrencode -t ansiutf8
+~~~
+
+***端末***
+
+QRコードを読み取る
+
+
+### 3.4. 確認(***k3***)
+
+~~~
+$ sudo wg
+interface: wg0
+  public key: xxxxxxxxxxxxxxx
+  private key: (hidden)
+  listening port: 51820
+
+peer: xxxxxxxxxxxxxxx
+  endpoint: 126.204.174.59:51335
+  allowed ips: 192.168.5.2/32, 192.168.100.0/24
+  latest handshake: 3 seconds ago
+  transfer: 3.52 MiB received, 357.75 KiB sent
+
+peer: xxxxxxxxxxxxxxx
+  endpoint: 1.75.249.86:63797
+  allowed ips: 192.168.5.3/32
+  latest handshake: 8 minutes, 57 seconds ago
+  transfer: 356.53 KiB received, 3.52 MiB sent
+~~~
+
+## 4. Podman
 
 ~~~sh
-git clone https://github.com/noyuno/k3
-cd k3
-# install docker-compose
-./bin/install
-cp .env.example .env
-vi .env
+podman-compose up -d
 ~~~
-
-14. Run services
-
-~~~sh
-dc up -d
-~~~
-
-## Operations
-
-- `./bin/install-compose`: install docker-compose
-- `./bin/update`: update all
-- `./bin/restart`: restart all containers
-- `./bin/remote-upgrade`: upgrade remote (`-i` to pull images)
 
 ## Attention
 

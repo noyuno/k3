@@ -10,7 +10,7 @@ services:
             - animed
             - portainer
             - owncloud
-            - discordbot
+            - notifyd
             - pe
         ports:
             - 80:80
@@ -28,7 +28,7 @@ services:
                 portainer.${DOMAIN} -> http://portainer:9000,
                 photos.${DOMAIN} -> http://photod:80,
                 drive.${DOMAIN} -> http://owncloud:8080,
-                discord.${DOMAIN} -> http://discordbot:80,
+                notifyd.${DOMAIN} -> http://notifyd:80,
                 pi.${DOMAIN} -> http://pe:3000/,
             SERVER_NAMES_HASH_BUCKET_SIZE: 64
             FORCE_RENEW: 'false'
@@ -73,7 +73,7 @@ services:
         restart: "on-failure:5"
         links:
             - gitbucket-db
-            - discordbot
+            - notifyd
         environment:
             CONTAINER_NAME: gitbucket-db-backup
             S3_REGION: ap-northeast-1
@@ -88,8 +88,8 @@ services:
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
             SCHEDULE: '23 48 17 * * 0,3' # 2:48: sec min hour day month week
             #DATETIME: "true"
-            DISCORDBOT: discordbot
-            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+            DISCORDBOT: notifyd
+            DISCORDBOT_TOKEN: "${NOTIFYD_TOKEN}"
 
     minio:
         image: minio/minio:latest
@@ -139,7 +139,7 @@ services:
         restart: "on-failure:5"
         links:
             - owncloud-db
-            - discordbot
+            - notifyd
         environment:
             CONTAINER_NAME: owncloud-db-backup
             S3_REGION: ap-northeast-1
@@ -154,14 +154,14 @@ services:
             POSTGRES_EXTRA_OPTS: '--schema=public --blobs'
             SCHEDULE: '23 16 18 * * 0,3' # 3:16: sec min hour day month week
             #DATETIME: "true"
-            DISCORDBOT: discordbot
-            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+            DISCORDBOT: notifyd
+            DISCORDBOT_TOKEN: "${NOTIFYD_TOKEN}"
 
     backupd:
         build: backupd
         restart: "on-failure:5"
         links:
-            - discordbot
+            - notifyd
         environment:
             NAME: backupd
             AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
@@ -172,7 +172,8 @@ services:
             EXCLUDES: "tmp,db"
             COMPRESS: "true"
             #DATETIME: "true"
-            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+            DISCORDBOT: notifyd
+            DISCORDBOT_TOKEN: "${NOTIFYD_TOKEN}"
         volumes:
             - ./:/data:ro
             - ./backupd:/opt/backupd:ro
@@ -185,36 +186,22 @@ services:
         volumes:
             - ./data/animed:/data
 
-    discordbot:
-        build: discordbot
+    notifyd:
+        build: notifyd
         restart: "on-failure:5"
-        expose:
-            - "80"
-        links:
-            #- cadvisor
-            - manet
+        ports:
+            - "5050:5050"
         volumes:
-            - ./data/discordbot:/data/discordbot
-            - ./logs/discordbot:/logs/discordbot
-            - ./discordbot:/opt/discordbot:ro
+            - ./data/notifyd:/data/notifyd
+            - ./logs/notifyd:/logs/notifyd
         environment:
-            DEPLOY: /opt/discordbot
+            DEPLOY: /data/notifyd
             DISCORD_TOKEN: ${DISCORD_TOKEN}
-            DISCORD_CHANNEL_NAME: ${DISCORD_CHANNEL_NAME}
-            GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY}
-            DARK_SKY_API_KEY: ${DARK_SKY_API_KEY}
-            LOCATION: ${LOCATION}
-            #CADVISOR: 'cadvisor:8080'
-            MANET: 'manet:8891'
-            XRAIN_LAT: ${XRAIN_LAT}
-            XRAIN_LON: ${XRAIN_LON}
-            XRAIN_ZOOM: ${XRAIN_ZOOM}
-            #CONTAINERS: 'nginx,php7,gitbucket,gitbucket-db,gitbucket-db-backup,minio,backupd,animed,prometheus,node-exporter,grafana,manet,portainer,photod,rclone-drive-local,rclone-drive-s3,pe'
-            MORNING: "22:00" # 07:00
-            EVENING: "10:00" # 19:00
-            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
-            PORT: 80
-            
+            NOTIFYD_TOKEN: "${NOTIFYD_TOKEN}"
+            DISCORD_CHANNEL_NAME: k3
+            PORT: 5050
+            DEBUG: ${DEBUG}
+
     prometheus:
         image: prom/prometheus
         restart: "on-failure:5"
@@ -302,14 +289,14 @@ services:
         expose:
             - "80"
         links:
-            - discordbot
+            - notifyd
             - nginx
         environment:
             GOOGLE_OAUTH_CLIENT: ${GOOGLE_OAUTH_CLIENT}
             GOOGLE_OAUTH_SECRET: ${GOOGLE_OAUTH_SECRET}
             BASE_URL: "https://photos.${DOMAIN}"
-            DISCORDBOT: "discordbot"
-            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+            DISCORDBOT: "notifyd"
+            DISCORDBOT_TOKEN: "${NOTIFYD_TOKEN}"
             AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
             AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
             S3_BUCKET: ${S3_BUCKET}
@@ -329,15 +316,15 @@ services:
     rclone-drive-local:
         build: rcloned
         links:
-            - discordbot
+            - notifyd
         environment:
             RCLONE_CROND_SCHEDULE: "02 18 * * 0,3" # 03:02
             RCLONE_CROND_SOURCE_PATH: "drive:"
             RCLONE_CROND_DESTINATION_PATH: "/data"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
             CONTAINER_NAME: "rclone-drive-local"
-            DISCORDBOT: discordbot
-            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+            DISCORDBOT: notifyd
+            DISCORDBOT_TOKEN: "${NOTIFYD_TOKEN}"
         cap_add:
             - MKNOD
             - SYS_ADMIN
@@ -371,15 +358,15 @@ services:
     rclone-drive-s3:
         build: rcloned
         links:
-            - discordbot
+            - notifyd
         environment:
             RCLONE_CROND_SCHEDULE: "02 00 * * 0,3" # 09:02
             RCLONE_CROND_SOURCE_PATH: "/data"
             RCLONE_CROND_DESTINATION_PATH: "s3:k3b/google/drive"
             RCLONE_CROND_OPTIONS: "--transfers 1 --buffer-size 1M --use-mmap -v"
             CONTAINER_NAME: "rclone-drive-s3"
-            DISCORDBOT: discordbot
-            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+            DISCORDBOT: notifyd
+            DISCORDBOT_TOKEN: "${NOTIFYD_TOKEN}"
         cap_add:
             - MKNOD
             - SYS_ADMIN
@@ -412,10 +399,10 @@ services:
         expose:
             - "3000"
         links:
-            - discordbot
+            - notifyd
         environment:
-            DISCORDBOT: discordbot
-            DISCORDBOT_TOKEN: "${DISCORDBOT_TOKEN}"
+            DISCORDBOT: notifyd
+            DISCORDBOT_TOKEN: "${NOTIFYD_TOKEN}"
             PE_TOKEN: "${PE_TOKEN}"
             NODE_ENV: production
         volumes:
